@@ -1,0 +1,22 @@
+name: Actualizar datos
+on:
+  schedule:
+    - cron: "*/30 * * * *"   # cada 30 minutos (GitHub puede retrasarlo unos minutos)
+  workflow_dispatch:          # permite ejecutarlo a mano desde la pestaña Actions
+permissions:
+  contents: write
+jobs:
+  actualizar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: node scripts/actualizar.mjs
+      - name: Guardar cambios
+        run: |
+          git config user.name "actualizador-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add data/data.json
+          git diff --cached --quiet || (git commit -m "Actualizar datos $(date -u +%F' '%H:%M)" && git push)
