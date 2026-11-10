@@ -1,0 +1,758 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Radar de Portafolio</title>
+<meta name="description" content="Radar de Portafolio: monitor de mercado, dólar, combustibles e inflación de República Dominicana, con noticias de medios confiables.">
+<meta name="theme-color" content="#0b1020">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%93%A1%3C/text%3E%3C/svg%3E">
+<style>
+:root{color-scheme:dark;--bg:#07111f;--panel:#101d30;--line:#24344b;--muted:#9db0c9;--text:#eef5ff;--accent:#65a9ff;--green:#3dd598;--red:#ff6b78}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(145deg,#06101e,#0b1930);font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:var(--text)}
+main{max-width:1100px;margin:auto;padding:28px 18px 50px}.top{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+h1{font-size:27px;margin:0}.sub{color:var(--muted);margin-top:4px}.pill{border:1px solid var(--line);border-radius:999px;padding:7px 12px;color:var(--muted);font-size:12px}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:16px 0}.card,.panel{background:rgba(16,29,48,.94);border:1px solid var(--line);border-radius:16px;padding:18px}
+.metric{font-size:25px;font-weight:700;margin-top:8px}.label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.panel{margin-top:16px}.panel h2{font-size:18px;margin:0 0 14px}
+table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:13px 9px;border-bottom:1px solid var(--line)}th{font-size:12px;color:var(--muted);font-weight:600}td:last-child,th:last-child{text-align:right}.ticker{font-weight:750}.desc{display:block;color:var(--muted);font-size:12px}.change.up{color:var(--green)}.change.down{color:var(--red)}
+.controls{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:10px;align-items:end}
+label{display:block;color:var(--muted);font-size:12px;margin-bottom:6px}input{width:100%;background:#081525;border:1px solid var(--line);color:var(--text);border-radius:9px;padding:11px;font:inherit}
+button{border:0;border-radius:9px;background:var(--accent);color:#061326;font-weight:700;padding:11px 15px;cursor:pointer}button.secondary{background:#20334d;color:var(--text);border:1px solid var(--line)}button:disabled{opacity:.55;cursor:wait}
+.note{color:var(--muted);font-size:12px;margin-top:10px}.news-item{padding:13px 0;border-bottom:1px solid var(--line)}.news-item:last-child{border:0}.news-item a{color:#c5ddff;text-decoration:none;font-weight:650}.news-item a:hover{text-decoration:underline}.meta{color:var(--muted);font-size:12px;margin-top:4px}.empty{color:var(--muted);padding:14px 0}.status{font-size:13px;color:var(--muted);margin-top:10px}.footer{margin-top:20px;color:var(--muted);font-size:12px}
+.ogrid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}.obox{border:1px solid var(--line);border-radius:14px;padding:14px;background:#0b1727}.obox .tk{font-weight:750;font-size:16px}.obox .vd{font-size:15px;font-weight:800;margin:8px 0 6px}.obox .dt{font-size:12px;color:var(--muted)}
+.obox.up{border-color:var(--green)}.obox.up .vd{color:var(--green)}.obox.down{border-color:var(--red)}.obox.down .vd{color:var(--red)}.obox.risk{border-color:#ffb020;background:#2a1f08}.obox.risk .vd{color:#ffb020}.obox.flat .vd{color:var(--accent)}.obox.none .vd{color:var(--muted)}
+.overall{margin-bottom:12px;font-size:14px}
+@media(max-width:1000px){.ogrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.mgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.mstate{font-size:12px;font-weight:700;margin-left:10px;padding:4px 10px;border-radius:999px;border:1px solid var(--line);vertical-align:middle}
+.mverdict{font-size:20px;font-weight:800;margin-bottom:12px}.mverdict small{font-size:12px;font-weight:400;color:var(--muted);margin-left:8px}
+.xchips{margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:12px;color:var(--muted)}.xchips a{border:1px solid var(--line);border-radius:999px;padding:2px 9px;color:#c5ddff;text-decoration:none}.xchips a:hover{background:#20334d}
+.tls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:14px}
+@media(max-width:1000px){.mgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px){.tls{grid-template-columns:1fr}}
+@media(max-width:760px){.grid{grid-template-columns:1fr}.controls{grid-template-columns:1fr 1fr}.controls .wide{grid-column:1/-1}table{font-size:13px}th,td{padding:10px 5px}}
+
+/* ===== Tema profesional ===== */
+:root{color-scheme:dark;--bg:#0b1020;--bg2:#0f172a;--panel:#131c2e;--panel2:#0f1829;--line:#1f2b41;--line2:#2a3a57;--muted:#8a9bb8;--text:#e8eef8;--accent:#4f8cff;--accent2:#7aa8ff;--green:#22c55e;--red:#f04d5e;--amber:#f5a524;--radius:12px;--shadow:0 1px 0 rgba(255,255,255,.03) inset,0 8px 24px rgba(0,0,0,.25)}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{background:radial-gradient(1200px 600px at 10% -10%,#16264a 0%,transparent 60%),var(--bg);font-feature-settings:"tnum" 1,"cv11" 1;letter-spacing:.005em}
+main{max-width:1200px;padding:0 20px 60px}
+.nav{position:sticky;top:0;z-index:50;display:flex;gap:4px;overflow-x:auto;padding:10px 0;margin:0 -20px 18px;padding-left:20px;padding-right:20px;background:rgba(11,16,32,.85);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line);scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nav a{flex:0 0 auto;color:var(--muted);text-decoration:none;font-size:13px;font-weight:600;padding:7px 12px;border-radius:8px;transition:.15s}
+.nav a:hover{color:var(--text);background:#1a2740}
+.top{padding:26px 0 8px;margin-bottom:8px;align-items:flex-end}
+h1{font-size:28px;font-weight:750;letter-spacing:-.01em}
+.sub{color:var(--muted);font-size:14px;margin-top:6px}
+.pill{background:#0f1829;border:1px solid var(--line2);border-radius:999px;padding:6px 12px;color:var(--muted);font-size:12px;font-weight:600;display:inline-flex;align-items:center;gap:6px}
+#connection{transition:.2s}
+.grid{gap:14px;margin:8px 0 6px}
+.card,.panel{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+.card{padding:18px 20px}
+.label{font-size:11px;font-weight:700;letter-spacing:.09em;color:var(--muted)}
+.metric{font-size:26px;font-weight:750;letter-spacing:-.01em;margin-top:6px}
+.panel{margin-top:18px;padding:22px 22px 18px;scroll-margin-top:70px}
+.panel h2{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:17px;font-weight:700;margin:0 0 16px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.mstate{font-size:12px;font-weight:700;margin-left:0;padding:5px 11px;border-radius:999px;background:#0b1424;border:1px solid var(--line2);color:var(--accent2);white-space:nowrap}
+table{font-size:14px}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:700;border-bottom:1px solid var(--line2);padding:10px 9px}
+td{border-bottom:1px solid var(--line);padding:12px 9px}
+tbody tr:hover td{background:#16223a}
+.ticker{font-weight:700;color:var(--text)}
+.desc{font-size:12px;color:var(--muted)}
+.change.up,.up .vd{color:var(--green)}.change.down,.down .vd{color:var(--red)}
+.obox{background:#0c1526;border:1px solid var(--line);border-radius:10px;padding:14px 15px;transition:border-color .2s,transform .2s}
+.obox:hover{border-color:var(--line2);transform:translateY(-1px)}
+.obox.up{border-color:rgba(34,197,94,.45);background:linear-gradient(180deg,rgba(34,197,94,.07),#0c1526)}
+.obox.down{border-color:rgba(240,77,94,.45);background:linear-gradient(180deg,rgba(240,77,94,.07),#0c1526)}
+.obox.risk{border-color:rgba(245,165,36,.5);background:linear-gradient(180deg,rgba(245,165,36,.08),#0c1526)}
+.obox .tk{font-weight:700;font-size:14px}
+.obox .vd{font-size:16px;font-weight:750}
+.obox .dt{font-size:12px;color:var(--muted);line-height:1.45}
+button{border-radius:8px;font-weight:650;font-size:13px;padding:10px 16px;background:var(--accent);color:#fff;transition:.15s}
+button:hover:not(:disabled){filter:brightness(1.08)}
+button.secondary{background:#17233a;color:var(--text);border:1px solid var(--line2)}
+button.secondary:hover:not(:disabled){background:#1d2d49}
+input{background:#0a1322;border:1px solid var(--line2);border-radius:8px;color:var(--text);padding:10px 12px;font-size:14px}
+input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(79,140,255,.18)}
+label{font-size:12px;font-weight:600;color:var(--muted)}
+.note{font-size:12px;color:var(--muted);line-height:1.55;margin-top:12px}
+.news-item{padding:14px 0;border-bottom:1px solid var(--line)}
+.news-item a{color:var(--text);font-weight:600;font-size:14.5px;line-height:1.4}
+.news-item a:hover{color:var(--accent2)}
+.meta{font-size:12px;color:var(--muted);margin-top:4px}
+.overall{font-size:14px;line-height:1.55}
+.mverdict{font-size:19px;font-weight:750;letter-spacing:-.01em}
+.mverdict small{font-size:12.5px;font-weight:500}
+.status{font-size:13px;color:var(--muted);margin-top:12px;padding:10px 12px;background:#0b1424;border:1px solid var(--line);border-radius:8px}
+.footer{text-align:center;padding:24px 12px 0;font-size:12px;line-height:1.6;border-top:1px solid var(--line);margin-top:26px}
+.xchips a{border-radius:999px;background:#0c1526}
+.tls{gap:16px}
+.card[style*="padding:12px"]{padding:14px!important}
+@media(max-width:1000px){.mgrid,.ogrid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media(max-width:760px){
+ main{padding:0 12px 40px}
+ .nav{margin:0 -12px 14px;padding-left:12px;padding-right:12px}
+ .panel{padding:16px 14px}
+ h1{font-size:23px}
+ .grid,.tls{grid-template-columns:1fr!important}
+ .mgrid,.ogrid{grid-template-columns:1fr 1fr!important}
+ .controls{grid-template-columns:1fr!important}
+ table{font-size:12.5px}
+ th,td{padding:9px 5px}
+}
+</style>
+</head>
+<body>
+<main>
+  <nav class="nav" aria-label="Secciones"><a href="#mercado">Mercado</a><a href="#mapa">Mapa</a><a href="#dolar">Dólar</a><a href="#combustibles">Combustibles</a><a href="#inflacion">Inflación</a><a href="#cotizaciones">Cotizaciones</a><a href="#perspectiva">Perspectiva</a><a href="#fed">Fed & Casa Blanca</a><a href="#noticias">Noticias</a><a href="#voces">Voces</a><a href="#config">Configuración</a></nav>
+  <div class="top">
+    <div><h1>Radar de Portafolio</h1><div class="sub">Monitor de tu portafolio, mercado de EE. UU., dólar, combustibles e inflación de República Dominicana.</div></div>
+    <div class="pill" id="connection">● Sin conectar · requiere API</div>
+  </div>
+  <section class="grid">
+    <div class="card"><div class="label">Activos vigilados</div><div class="metric">5</div><div class="sub">20% de asignación por activo</div></div>
+    <div class="card"><div class="label">Umbral diario</div><div class="metric" id="dailyMetric">±3%</div><div class="sub">Aviso ante movimientos relevantes</div></div>
+    <div class="card"><div class="label">Última actualización</div><div class="metric" id="updated" style="font-size:18px">—</div><div class="sub">Automática cada 2 minutos</div></div>
+  </section>
+
+  <section class="panel" id="mercado">
+    <h2>Cómo está la bolsa ahora <span class="mstate" id="mstate">—</span></h2>
+    <div class="mverdict" id="mverdict">Esperando datos…</div>
+    <div class="overall" id="mhours">Calculando horario…</div>
+    <label style="display:flex;gap:8px;align-items:center;margin-bottom:12px;font-size:13px;cursor:pointer"><input type="checkbox" id="mktalert" style="width:auto"> 🔔 Avisarme en mi PC cuando la bolsa abra y cuando cierre</label>
+    <div class="mgrid" id="mgrid"></div>
+    <div class="note" id="mnote">Índices vía ETF de referencia (SPY, QQQ, DIA, IWM). Se actualiza cada 20 segundos mientras la pestaña esté visible.</div>
+  </section>
+
+  <section class="panel" id="mapa">
+    <h2>🗺 Mapa de mercado (estilo Finviz) <span class="mstate" id="heatstate">—</span></h2>
+    <div class="label" style="margin-bottom:8px">Mi portafolio</div>
+    <div class="mgrid" id="heatport" style="grid-template-columns:repeat(5,minmax(0,1fr));margin-bottom:16px"></div>
+    <div id="heatmap" style="position:relative;width:100%;height:520px;background:#0b1727;border:1px solid var(--line);border-radius:10px;overflow:hidden"><div class="empty" style="padding:20px">Añade tu clave de Finnhub para cargar el mapa.</div></div>
+    <div style="display:flex;align-items:center;gap:6px;margin-top:8px;font-size:11px;color:var(--muted)">−3% <span style="flex:0 0 200px;height:10px;border-radius:5px;background:linear-gradient(90deg,#f23645,#414554,#089981)"></span> +3% · el tamaño de cada cuadro refleja el peso aproximado de la empresa</div>
+    <div class="tls" style="margin-top:16px">
+      <div><div class="label" style="margin-bottom:6px">🟢 Mayores subidas</div><div id="heatup"></div></div>
+      <div><div class="label" style="margin-bottom:6px">🔴 Mayores bajadas</div><div id="heatdown"></div></div>
+    </div>
+    <div class="label" style="margin:16px 0 8px">Rendimiento por sector hoy</div>
+    <div id="heatsect"></div>
+    <div class="label" style="margin:18px 0 6px">🧠 ¿Qué harían los inversores más inteligentes? (escenarios hipotéticos, solo sugerencia)</div>
+    <div class="note" style="margin:0 0 10px">Reglas generales inspiradas en los principios de inversores reconocidos (Buffett, Graham, Munger, Lynch, Dalio, Marks y Bogle). No son citas textuales ni recomendaciones personalizadas: no conocen tu situación, tu horizonte ni tu tolerancia al riesgo, y yo no soy asesor financiero.</div>
+    <div class="tls" id="heatadvice"></div>
+    <div class="note">Cotizaciones de Finnhub (se actualiza cada 5 minutos). Selección de 31 grandes empresas de EE. UU. agrupadas por sector; los sectores usan los ETF SPDR (XLK, XLF…). Los tamaños son pesos aproximados fijos de referencia, no capitalización en vivo. Pulsa un cuadro para abrir su ficha en Finviz.</div>
+  </section>
+
+  <section class="panel" id="dolar">
+    <h2>💵 Dólar vs peso dominicano <span class="mstate" id="fxstate">—</span></h2>
+    <div class="mverdict" id="fxverdict">Cargando tasa…</div>
+    <div class="label" style="margin:0 0 8px">Bancos y casas de cambio · InfoDolar</div>
+    <div id="info" style="margin-bottom:20px"><div class="empty">Cargando InfoDolar…</div></div>
+    <div class="label" style="margin:0 0 8px">Banco Central · tasa oficial</div>
+    <div id="bcrd" style="margin-bottom:16px"><div class="empty">Cargando tasas del Banco Central y bancos…</div></div>
+    <div class="label" style="margin:6px 0 8px">Mercado internacional (referencia)</div>
+    <div class="mgrid" id="fxgrid"></div>
+    <div id="fxspark" style="margin-top:12px"></div>
+    <div class="note" id="fxnote">Tasa de mercado (referencia). Los bancos y casas de cambio en RD aplican su propia tasa de compra y venta, normalmente algo distinta.</div>
+  </section>
+
+  <section class="panel" id="combustibles">
+    <h2>⛽ Combustibles en República Dominicana <span class="mstate" id="fuelstate">—</span></h2>
+    <div class="mverdict" id="fuelhead" style="font-size:16px">Cargando precios oficiales…</div>
+    <div class="mgrid" id="fuelgrid"></div>
+    <div class="note" id="fuelnote"></div>
+    <div id="fuelnews" style="margin-top:12px"></div>
+  </section>
+
+  <section class="panel" id="inflacion">
+    <h2>📈 Inflación mensual en RD (Banco Central) <span class="mstate" id="infstate">2026</span></h2>
+    <div class="mverdict" id="infhead" style="font-size:16px"></div>
+    <div id="infchart"></div>
+    <div style="overflow-x:auto;margin-top:12px"><table><thead><tr><th>Mes</th><th>Variación mensual</th><th>Acumulada del año</th><th>Interanual</th><th>Rango meta (4% ± 1%)</th></tr></thead><tbody id="inftable"></tbody></table></div>
+    <div class="note" id="infnote"></div>
+  </section>
+
+  <section class="panel" id="cotizaciones">
+    <h2>Distribución y cotizaciones</h2>
+    <table><thead><tr><th>Activo</th><th>Precio USD</th><th>Variación diaria</th><th>Asignación</th></tr></thead>
+    <tbody id="holdings">
+      <tr><td><span class="ticker">VOO</span><span class="desc">Vanguard S&P 500 ETF</span></td><td>—</td><td>—</td><td>20%</td></tr>
+      <tr><td><span class="ticker">GLD</span><span class="desc">SPDR Gold Shares</span></td><td>—</td><td>—</td><td>20%</td></tr>
+      <tr><td><span class="ticker">NVDA</span><span class="desc">NVIDIA Corporation</span></td><td>—</td><td>—</td><td>20%</td></tr>
+      <tr><td><span class="ticker">SCHD</span><span class="desc">Schwab U.S. Dividend Equity ETF</span></td><td>—</td><td>—</td><td>20%</td></tr>
+      <tr><td><span class="ticker">VXUS</span><span class="desc">Vanguard Total International Stock ETF</span></td><td>—</td><td>—</td><td>20%</td></tr>
+    </tbody></table>
+    <div class="note">Las cotizaciones se muestran en USD. La asignación es la indicada en tu imagen; no representa el valor monetario actual de cada posición.</div>
+  </section>
+
+  <section class="panel" id="config">
+    <h2>Configuración de seguimiento</h2>
+    <div class="controls">
+      <div class="wide"><label for="token">Clave API de Finnhub</label><input id="token" type="password" placeholder="Pega aquí tu token privado"></div>
+      <div><label for="daily">Alerta diaria (%)</label><input id="daily" type="number" min="0.5" max="30" step="0.5" value="3"></div>
+      <div><label for="weekly">Alerta en 5 sesiones (%)</label><input id="weekly" type="number" min="1" max="50" step="1" value="5"></div>
+      <button id="save">Guardar</button>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
+      <button id="refresh">Actualizar ahora</button>
+      <button class="secondary" id="notify">Activar notificaciones</button><button class="secondary" id="wipe">Borrar clave y datos</button>
+    </div>
+    <label style="display:flex;gap:8px;align-items:center;margin-top:14px;color:var(--text);font-size:13px;cursor:pointer"><input type="checkbox" id="trusted" style="width:auto"> Solo noticias de medios financieros de alta credibilidad (Reuters, Bloomberg, WSJ, Financial Times, CNBC, Barron's, MarketWatch, AP, Morningstar, The Economist, IBD, Dow Jones, NYT)</label>
+    <div class="status" id="status">Añade una clave API de Finnhub para consultar datos reales. La clave se guarda únicamente en este navegador.</div>
+    <div class="note">La aplicación consulta cotizaciones y noticias públicas mediante Finnhub. Para recibir avisos del navegador, concede permiso y mantén esta página abierta. Todo se actualiza solo cada 2 minutos (y al abrir o volver a la pestaña); las noticias se traducen automáticamente al español.</div>
+  </section>
+
+  <section class="panel" id="perspectiva">
+    <h2>Perspectiva según las noticias</h2>
+    <div class="overall" id="overall">Se calculará al actualizar.</div>
+    <div class="ogrid" id="outlook"></div>
+    <div class="note">Estimación automática basada en palabras clave de las noticias de los últimos 30 días y en el movimiento reciente del precio. No es una predicción ni una recomendación de compra o venta: el mercado puede moverse en sentido contrario.</div>
+  </section>
+
+  <section class="panel" id="fed">
+    <h2>Fed y Presidente de EE. UU.</h2>
+    <div class="overall" id="fomc"></div>
+    <div class="overall" id="fedlast">Cargando…</div>
+    <div class="tls">
+      <div><h3 style="margin:0 0 6px;font-size:15px">🏦 Reserva Federal (decisiones y noticias)</h3><div id="fedlist"></div></div>
+      <div><h3 style="margin:0 0 6px;font-size:15px">🇺🇸 Presidente / Casa Blanca</h3><div id="preslist"></div></div>
+    </div>
+    <div class="note">Comunicados oficiales de federalreserve.gov y whitehouse.gov, más noticias de medios confiables. Las decisiones de la Fed y las declaraciones del presidente suelen mover todo el mercado: tenlas en cuenta junto a la perspectiva de cada activo.</div>
+  </section>
+
+  <section class="panel" id="noticias">
+    <h2>Noticias recientes</h2>
+    <div id="news"><div class="empty">Las noticias aparecerán aquí después de conectar la API y actualizar (Finnhub + feeds directos de Bloomberg, WSJ, CNBC, MarketWatch, FT, NYT, Reuters y Barron's).</div></div>
+  </section>
+  <section class="panel" id="voces">
+    <h2>Voces influyentes en X (Twitter)</h2>
+    <div class="xchips" id="vchips"></div>
+    <div style="margin-top:14px"><button class="secondary" id="loadx">Recargar publicaciones</button></div>
+    <div class="tls" id="tls"></div>
+    <div class="note">Junto a cada nombre, el indicador 🔴/🟢 avisa de noticias de mercado recientes de su medio (Bloomberg, CNBC, WSJ); no es el tweet de la persona. Debajo, los últimos posts de cada persona con el visor oficial de X, que carga solo al abrir la página. Si X lo bloquea (suele exigir sesión iniciada en este navegador), aparece el enlace directo al perfil. Los nombres de usuario están escritos de memoria y pueden haber cambiado.</div>
+  </section>
+  <div class="footer">Herramienta informativa. No ejecuta operaciones ni constituye una recomendación de compra o venta. Los datos dependen de la cobertura y las condiciones del proveedor de mercado.</div>
+</main>
+<script>
+const _f=window.fetch.bind(window),_q=[];
+async function slot(){for(;;){const n=Date.now();while(_q.length&&n-_q[0]>60000)_q.shift();if(_q.length<50){_q.push(n);return}await new Promise(r=>setTimeout(r,Math.max(300,60000-(n-_q[0])+50)))}}
+window.fetch=async(u,o)=>{if(!String(u).includes("finnhub.io"))return _f(u,o);await slot();let r=await _f(u,o);if(r.status===429){await new Promise(x=>setTimeout(x,5000));await slot();r=await _f(u,o)}return r};
+addEventListener("offline",()=>{$("connection").textContent="Sin internet"});addEventListener("online",()=>{$("connection").textContent="Reconectando…"});
+const assets=[
+ {s:"VOO",n:"Vanguard S&P 500 ETF"},
+ {s:"GLD",n:"SPDR Gold Shares"},
+ {s:"NVDA",n:"NVIDIA Corporation"},
+ {s:"SCHD",n:"Schwab U.S. Dividend Equity ETF"},
+ {s:"VXUS",n:"Vanguard Total International Stock ETF"}
+];
+const $=id=>document.getElementById(id);
+let quotes={};
+let seen={};
+try{seen=JSON.parse(localStorage.getItem("radar_seen")||"{}")}catch(e){}
+function config(){return {token:$("token").value.trim(),daily:Math.max(.5,Number($("daily").value)||3),weekly:Math.max(1,Number($("weekly").value)||5)}}
+function save(){const c=config();localStorage.setItem("radar_token",c.token);localStorage.setItem("radar_daily",c.daily);localStorage.setItem("radar_weekly",c.weekly);$("dailyMetric").textContent="±"+c.daily+"%";$("status").textContent="Configuración guardada en este navegador."}
+$("token").value=localStorage.getItem("radar_token")||"";
+$("daily").value=localStorage.getItem("radar_daily")||3;
+$("weekly").value=localStorage.getItem("radar_weekly")||5;
+$("dailyMetric").textContent="±"+$("daily").value+"%";
+$("save").addEventListener("click",save);
+$("notify").addEventListener("click",async()=>{if(!("Notification"in window)){alert("Este navegador no admite notificaciones.");return}const p=await Notification.requestPermission();$("status").textContent=p==="granted"?"Notificaciones activadas.":"No se concedió permiso para notificaciones."});
+function alertUser(title,body,key){if(!("Notification"in window)||Notification.permission!=="granted")return;const now=Date.now();if(now-(seen[key]||0)<6*60*60*1000)return;new Notification(title,{body});seen[key]=now;localStorage.setItem("radar_seen",JSON.stringify(seen))}
+function rangeBar(q){if(!q||!(q.h>q.l)||!q.c)return"";const pos=Math.max(0,Math.min(100,(q.c-q.l)/(q.h-q.l)*100));return `<div style="height:4px;background:#24344b;border-radius:2px;margin:6px 0 2px;position:relative"><i style="position:absolute;left:${pos}%;top:-2px;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-left:-4px"></i></div><span class="desc">Mín $${Number(q.l).toFixed(2)} · Máx $${Number(q.h).toFixed(2)}</span>`}
+function renderQuotes(){
+ $("holdings").innerHTML=assets.map(a=>{const q=quotes[a.s];const price=q&&q.c?("$"+q.c.toFixed(2)):"—";const pct=q&&Number.isFinite(q.dp)?((q.dp>=0?"+":"")+q.dp.toFixed(2)+"%"):"—";const cls=q&&q.dp>0?"up":q&&q.dp<0?"down":"";return `<tr><td><span class="ticker">${a.s}</span><span class="desc">${a.n}</span></td><td>${price}${rangeBar(q)}</td><td class="change ${cls}">${pct}</td><td>20%</td></tr>`}).join("");
+}
+async function refresh(){
+ const c=config();if(!c.token){$("status").textContent="Falta la clave API de Finnhub.";return}
+ $("refresh").disabled=true;$("status").textContent="Consultando cotizaciones y noticias…";
+ try{
+  const headers={};
+  const qresults=await Promise.all(assets.map(async a=>{const r=await fetch(`https://finnhub.io/api/v1/quote?symbol=${encodeURIComponent(a.s)}&token=${encodeURIComponent(c.token)}`);if(!r.ok)throw Error("No se pudo consultar "+a.s+" (HTTP "+r.status+"). Verifica tu token o el límite de la API.");return [a.s,await r.json()]}));
+  qresults.forEach(([s,q])=>{quotes[s]=q;if(Number.isFinite(q.dp)&&Math.abs(q.dp)>=c.daily)alertUser(`Movimiento en ${s}`,`Variación diaria: ${q.dp.toFixed(2)}%. Precio: $${Number(q.c).toFixed(2)}.`,s+"-"+Math.sign(q.dp)+"-"+Math.floor(Date.now()/86400000))});
+  renderQuotes();
+  const nowSec=Math.floor(Date.now()/1000),fiveDaysAgo=nowSec-10*86400;
+  const candleResults=await Promise.all(assets.map(async a=>{try{const r=await fetch(`https://finnhub.io/api/v1/stock/candle?symbol=${encodeURIComponent(a.s)}&resolution=D&from=${fiveDaysAgo}&to=${nowSec}&token=${encodeURIComponent(c.token)}`);if(!r.ok)return [a.s,null];const d=await r.json();return [a.s,d&&d.s==="ok"&&Array.isArray(d.c)?d.c:null]}catch(e){return [a.s,null]}}));
+  candleResults.forEach(([s,closes])=>{if(closes&&closes.length>=2){const base=closes[Math.max(0,closes.length-6)],last=closes[closes.length-1];if(base>0){const pct=(last/base-1)*100;if(Math.abs(pct)>=c.weekly)alertUser(`Movimiento de 5 sesiones en ${s}`,`Variación aproximada: ${pct.toFixed(2)}% en las últimas cinco sesiones.`,s+"-5d-"+Math.sign(pct)+"-"+Math.floor(Date.now()/86400000))}}});
+  const end=new Date(),start=new Date(end.getTime()-30*86400000);
+  const fmt=d=>d.toISOString().slice(0,10);
+  const newsResults=await Promise.all(assets.map(async a=>{try{const r=await fetch(`https://finnhub.io/api/v1/company-news?symbol=${encodeURIComponent(a.s)}&from=${fmt(start)}&to=${fmt(end)}&token=${encodeURIComponent(c.token)}`);if(!r.ok)return [];return (await r.json()).map(x=>({...x,ticker:a.s})).filter(x=>!onlyTrusted()||isTrusted(x)).slice(0,8)}catch(e){return []}}));
+  let gen=[];try{const r=await fetch(`https://finnhub.io/api/v1/news?category=general&token=${encodeURIComponent(c.token)}`);if(r.ok)gen=(await r.json()).filter(x=>!onlyTrusted()||isTrusted(x)).slice(0,8).map(x=>({...x,ticker:"MERCADO"}))}catch(e){}
+  const feeds=await getFeeds();
+  feeds.forEach(f=>assets.forEach((a,i)=>{if(MATCH[a.s].test(f.headline+" "+f.summary))newsResults[i].push({...f,ticker:a.s})}));
+  const du=new Set(),pool=[...newsResults.flat(),...gen,...feeds].sort((a,b)=>(b.datetime||0)-(a.datetime||0)).filter(x=>{const k=(x.headline||"").toLowerCase();if(du.has(k))return false;du.add(k);return true});
+  const all=pool.slice(0,30);
+  $("status").textContent="Traduciendo noticias al español…";await translateAll(all);renderOutlook(newsResults);
+  const important=/earnings|results|guidance|forecast|dividend|sec filing|lawsuit|investigation|restriction|export|artificial intelligence|\bAI\b|chip|semiconductor|merger|acquisition|stock split|index|holdings|expense ratio|downgrade|upgrade|inflation|federal reserve|interest rate|tariff|regulation|recall|demanda|investigación|dividendo|resultados|previsión|regulación/i;
+  all.forEach(n=>{const id=String(n.id||n.url||n.headline||"");if(id&&important.test((n.headline||"")+" "+(n.summary||""))){const key="news-"+n.ticker+"-"+id;if(!seen[key]){alertUser(`Noticia relevante: ${n.ticker}`,n.hes||n.headline||"Se publicó una noticia potencialmente relevante.",key);seen[key]=Date.now()}}});
+  localStorage.setItem("radar_seen",JSON.stringify(seen));
+  $("news").innerHTML=all.length?all.map(n=>`<div class="news-item"><div><span class="pill">${n.ticker}</span> <a href="${/^https?:\/\//.test(n.url||"")?escapeHtml(n.url):"#"}" target="_blank" rel="noopener">${escapeHtml(n.hes||n.headline||"Noticia sin título")}</a></div><div class="meta">${isTrusted(n)?"✓ ":""}${escapeHtml(n.source||"Fuente no indicada")} · ${n.datetime?new Date(n.datetime*1000).toLocaleString("es-DO"):"Fecha no disponible"}</div>${xChips(n)}${(n.ses||n.summary)?`<div class="meta">${escapeHtml(n.ses||n.summary.slice(0,260))}</div>`:""}</div>`).join(""):'<div class="empty">No hay noticias de medios de alta credibilidad para estos símbolos en los últimos 30 días (los ETF tienen poca cobertura propia). Puedes desmarcar el filtro de fuentes confiables para ver más, aunque de menor calidad.</div>';
+  lastAll=pool;updateVoices();renderGov().catch(()=>{});
+  $("updated").textContent=new Date().toLocaleTimeString("es-DO",{hour:"2-digit",minute:"2-digit"});
+  $("connection").textContent="Conectado · Finnhub";
+  $("status").textContent="Actualizado automáticamente. Noticias traducidas al español. La API puede ofrecer datos retrasados o limitar algunas consultas.";
+ }catch(e){$("status").textContent=e.message+" Si el problema persiste, revisa la disponibilidad de tu plan Finnhub."}
+ finally{$("refresh").disabled=false}
+}
+let tcache={};try{tcache=JSON.parse(localStorage.getItem("radar_tr")||"{}")}catch(e){}
+async function tr(t){
+ t=(t||"").trim().slice(0,450);if(!t)return"";if(tcache[t])return tcache[t];
+ try{const r=await fetch("https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=es&dt=t&q="+encodeURIComponent(t));if(r.ok){const d=await r.json();const o=d[0].map(x=>x[0]).join("");if(o){tcache[t]=o;return o}}}catch(e){}
+ try{const r=await fetch("https://api.mymemory.translated.net/get?langpair=en|es&q="+encodeURIComponent(t));const d=await r.json();const o=d.responseData&&d.responseData.translatedText;if(o&&Number(d.responseStatus)===200){tcache[t]=o;return o}}catch(e){}
+ return t}
+async function translateAll(list){
+ for(let i=0;i<list.length;i+=6){await Promise.all(list.slice(i,i+6).map(async n=>{n.hes=await tr(n.headline);n.ses=await tr((n.summary||"").slice(0,260))}))}
+ const k=Object.keys(tcache);if(k.length>600)k.slice(0,k.length-600).forEach(x=>delete tcache[x]);
+ try{localStorage.setItem("radar_tr",JSON.stringify(tcache))}catch(e){}
+}
+const POS=/\b(beats?|surges?|soars?|records?|rall(y|ies)|upgrad\w*|raises?|growth|strong\w*|profits?|outperform\w*|gains?|jumps?|rises?|bullish|boost\w*|approv\w*|expands?|higher|climbs?|tops?)\b/gi;
+const NEG=/\b(miss(es|ed)?|falls?|drops?|plunge\w*|slumps?|downgrad\w*|cuts?|weak\w*|loss(es)?|declines?|bearish|sell-?off|lower|layoffs?|slash\w*|tumbl\w*|slides?|concerns?|worr\w*)\b/gi;
+const RISK=/(lawsuit|investigation|probe|tariff|\bban\b|banned|restriction|export control|recall|fraud|warning|volatil|crash|bubble|recession|inflation|sanction|antitrust|\bfines?\b|uncertain|\brisks?\b)/gi;
+function analyze(items,q,c){
+ const now=Date.now()/1000;let score=0,p=0,n=0,r=0,top=null,tw=0;
+ const cnt=(t,re)=>(t.match(re)||[]).length;
+ items.forEach(a=>{const h=a.headline||"",sm=a.summary||"";
+  const pc=cnt(h,POS)*2+cnt(sm,POS),nc=cnt(h,NEG)*2+cnt(sm,NEG),rc=cnt(h+" "+sm,RISK);
+  let d=Math.max(-1,Math.min(1,pc-nc));
+  if(d>0&&/\b(no|not|fails?|failed|without|despite|lacks?)\b/i.test(h))d=-d;
+  const age=(now-(a.datetime||now))/86400,w=age<=3?1.5:age<=10?1:.5;
+  score+=d*w;if(d>0)p++;if(d<0)n++;if(rc>0)r++;
+  const m=Math.abs(pc-nc)*w+rc*.5;if(m>tw){tw=m;top=a}});
+ const dp=q&&Number.isFinite(q.dp)?q.dp:0;
+ if(Math.abs(dp)>=c.daily)score+=dp>0?1:-1;
+ const total=items.length;
+ if(!total&&!q)return {cls:"none",v:"Sin datos",d:"No hay noticias ni cotización."};
+ const risky=r>=3||(total>=3&&r/total>=.4)||Math.abs(dp)>=c.daily*2||(p>=2&&n>=2);
+ let cls,v;
+ if(risky){cls="risk";v="⚠ MUCHO RIESGO"}else if(score>=2){cls="up";v="▲ Podría SUBIR"}else if(score<=-2){cls="down";v="▼ Podría BAJAR"}else{cls="flat";v="● ESTABLE"}
+ const conf=total>=6?"alta":total>=3?"media":"baja";
+ const reason=top?String(top.hes||top.headline||"").slice(0,110):"";
+ return {cls,v,conf,reason,d:`${total} noticias: ${p} positivas, ${n} negativas, ${r} con riesgo. Hoy: ${(dp>=0?"+":"")+dp.toFixed(2)}%`}
+}
+let prevOl={};
+function renderOutlook(newsResults){
+ const c=config();const res=assets.map((a,i)=>({a,o:analyze(newsResults[i]||[],quotes[a.s],c)}));
+ $("outlook").innerHTML=res.map(x=>`<div class="obox ${x.o.cls}"><div class="tk">${x.a.s}</div><div class="vd">${x.o.v}</div><div class="dt">${x.o.d}</div>${x.o.conf?`<div class="dt">Confianza: <b>${x.o.conf}</b></div>`:""}${x.o.reason?`<div class="dt" style="margin-top:6px">Motivo: ${escapeHtml(x.o.reason)}</div>`:""}</div>`).join("");
+ res.forEach(x=>{const k=x.a.s;if(prevOl[k]&&prevOl[k]!==x.o.cls&&["up","down","risk"].includes(x.o.cls))alertUser(`Perspectiva ${k}: ${x.o.v}`,x.o.reason||x.o.d,"ol-"+k+"-"+x.o.cls+"-"+Math.floor(Date.now()/3600000));prevOl[k]=x.o.cls});
+ const cnt=k=>res.filter(x=>x.o.cls===k).length;
+ $("overall").innerHTML=`<b>Resumen del portafolio:</b> ${cnt("up")} con tendencia al alza, ${cnt("flat")} estables, ${cnt("down")} a la baja y ${cnt("risk")} con mucho riesgo.`;
+}
+const TRUSTED=/^(?=.*(bloomberg|wall street journal|dow jones|cnbc|marketwatch|financial times|the new york times|the economist|reserva federal|casa blanca))/i;
+function isTrusted(n){return TRUSTED.test((n.source||""))}
+function onlyTrusted(){return $("trusted").checked}
+$("trusted").checked=localStorage.getItem("radar_trusted")!=="0";
+$("trusted").addEventListener("change",()=>{localStorage.setItem("radar_trusted",onlyTrusted()?"1":"0");auto()});
+const MKT=[{s:"SPY",n:"S&P 500"},{s:"QQQ",n:"Nasdaq 100"},{s:"DIA",n:"Dow Jones"},{s:"IWM",n:"Russell 2000"}];
+let mq={},liveBusy=false;
+async function fj(path,t){const r=await fetch(`https://finnhub.io/api/v1/${path}${path.includes("?")?"&":"?"}token=${encodeURIComponent(t)}`);if(!r.ok)throw Error("HTTP "+r.status);return r.json()}
+async function liveMarket(){
+ const t=config().token;if(!t||liveBusy||document.visibilityState!=="visible")return;liveBusy=true;
+ try{
+  const res=await Promise.all([fj("stock/market-status?exchange=US",t).catch(()=>null),...MKT.map(m=>fj("quote?symbol="+m.s,t).catch(()=>null)),...assets.map(a=>fj("quote?symbol="+a.s,t).catch(()=>null))]);
+  MKT.forEach((m,i)=>{if(res[1+i]&&res[1+i].c)mq[m.s]=res[1+i]});
+  assets.forEach((a,i)=>{const q=res[1+MKT.length+i];if(q&&q.c)quotes[a.s]=q});
+  renderQuotes();renderMarket(res[0]);
+ }catch(e){}finally{liveBusy=false}
+}
+function renderMarket(st){
+ const sess=st&&st.session;
+ const lab=!st?"Estado desconocido":st.isOpen?"🟢 ABIERTO":sess==="pre-market"?"🟡 PRE-MERCADO":sess==="post-market"?"🟡 POST-CIERRE":"🔴 CERRADO";
+ $("mstate").textContent=lab+(st&&st.holiday?" · "+st.holiday:"");
+ const dps=MKT.map(m=>mq[m.s]&&Number.isFinite(mq[m.s].dp)?mq[m.s].dp:null).filter(v=>v!==null);
+ if(!dps.length){$("mverdict").textContent="Sin datos todavía.";return}
+ const avg=dps.reduce((a,b)=>a+b,0)/dps.length,spread=Math.max(...dps)-Math.min(...dps),big=dps.some(v=>Math.abs(v)>=2);
+ let v,col;
+ if(avg>=1){v="📈 Alcista fuerte";col="var(--green)"}else if(avg>=.3){v="📈 Alcista";col="var(--green)"}else if(avg>-.3){v="➖ Lateral / neutral";col="var(--accent)"}else if(avg>-1){v="📉 Bajista";col="var(--red)"}else{v="📉 Bajista fuerte";col="var(--red)"}
+ if(big||spread>=1.5)v+=" · ⚠ Volátil";
+ document.title=(st&&st.isOpen?"🟢 ":"🔴 ")+(avg>=0?"+":"")+avg.toFixed(2)+"% · Radar";
+ const stale=st&&!st.isOpen?" · datos del último cierre":"";
+ $("mverdict").innerHTML=`<span style="color:${col}">${v}</span><small>Promedio ${(avg>=0?"+":"")+avg.toFixed(2)}% · ${new Date().toLocaleTimeString("es-DO")}${stale}</small>`;
+ $("mgrid").innerHTML=MKT.map(m=>{const q=mq[m.s];if(!q)return `<div class="obox none"><div class="tk">${m.n}</div><div class="vd">—</div></div>`;const up=q.dp>=0;return `<div class="obox ${up?"up":"down"}"><div class="tk">${m.n} <span class="dt">${m.s}</span></div><div class="vd">$${q.c.toFixed(2)}</div><div class="dt">${(up?"+":"")+q.dp.toFixed(2)}% hoy · máx $${Number(q.h).toFixed(2)} · mín $${Number(q.l).toFixed(2)}</div></div>`}).join("");
+}
+const XMAP=[
+ [/reuters/i,[["ReutersBiz","Reuters Business"],["Reuters","Reuters"]]],
+ [/bloomberg/i,[["business","Bloomberg"],["markets","Bloomberg Markets"],["TheStalwart","Joe Weisenthal"],["tracyalloway","Tracy Alloway"],["elerianm","Mohamed El-Erian"]]],
+ [/wall street journal|wsj|dow jones/i,[["WSJmarkets","WSJ Markets"],["WSJ","WSJ"],["NickTimiraos","Nick Timiraos"]]],
+ [/financial times|ft\.com/i,[["FT","Financial Times"]]],
+ [/cnbc/i,[["CNBC","CNBC"],["carlquintanilla","Carl Quintanilla"],["jimcramer","Jim Cramer"]]],
+ [/marketwatch/i,[["MarketWatch","MarketWatch"]]],
+ [/barron/i,[["barronsonline","Barron's"]]],
+ [/associated press|apnews/i,[["AP","AP"]]],
+ [/morningstar/i,[["MorningstarInc","Morningstar"]]],
+ [/economist/i,[["TheEconomist","The Economist"]]],
+ [/investor'?s business daily|investors\.com/i,[["IBDinvestors","IBD"]]],
+ [/new york times|nytimes/i,[["nytimes","NYT"],["nytimesbusiness","NYT Business"]]]
+];
+function xChips(n){const t=(n.source||"")+" "+(n.url||"");const m=XMAP.find(x=>x[0].test(t));if(!m)return"";return `<div class="xchips">𝕏 Voces de este medio: ${m[1].map(a=>`<a href="https://x.com/${a[0]}" target="_blank" rel="noopener">${a[1]}</a>`).join("")}</div>`}
+const VOICES=[["elerianm","Mohamed El-Erian"],["RayDalio","Ray Dalio"],["LizAnnSonders","Liz Ann Sonders"],["BillAckman","Bill Ackman"],["jimcramer","Jim Cramer"],["carlquintanilla","Carl Quintanilla"],["NickTimiraos","Nick Timiraos"],["TheStalwart","Joe Weisenthal"],["WSJmarkets","WSJ Markets"],["ReutersBiz","Reuters Business"],["business","Bloomberg"],["CNBC","CNBC"]];
+$("vchips").innerHTML=VOICES.map(a=>`<a href="https://x.com/${a[0]}" target="_blank" rel="noopener">${a[1]}</a>`).join("");
+const TL=[["elerianm","Mohamed El-Erian"],["RayDalio","Ray Dalio"],["LizAnnSonders","Liz Ann Sonders"],["BillAckman","Bill Ackman"],["jimcramer","Jim Cramer"],["carlquintanilla","Carl Quintanilla"],["NickTimiraos","Nick Timiraos"],["TheStalwart","Joe Weisenthal"]];
+
+const FEEDS=[["Bloomberg","https://www.bloomberg.com/feeds/markets/news.rss"],["Bloomberg","https://www.bloomberg.com/feeds/news.rss"],["The Wall Street Journal","https://feeds.content.dowjones.io/public/rss/RSSMarketsMain"],["The Wall Street Journal","https://feeds.content.dowjones.io/public/rss/RSSWorldNews"],["CNBC","https://www.cnbc.com/id/100003114/device/rss/rss.html"],["MarketWatch","https://feeds.marketwatch.com/marketwatch/topstories"],["Financial Times","https://www.ft.com/markets?format=rss"],["The New York Times","https://rss.nytimes.com/services/xml/rss/nyt/Business.xml"],["The Economist","https://www.economist.com/latest/rss.xml"]];
+const MATCH={VOO:/s&p ?500|\bvoo\b|wall street/i,GLD:/\bgold\b|\bgld\b|bullion/i,NVDA:/nvidia|nvda|jensen huang/i,SCHD:/dividend|\bschd\b|schwab/i,VXUS:/international|emerging market|europe|china|japan|global (stocks|markets)|\bvxus\b/i};
+async function readFeed(src,url,days=3){
+ let txt=null;
+ for(const px of ["https://api.allorigins.win/raw?url=","https://corsproxy.io/?url="]){try{const r=await _f(px+encodeURIComponent(url));if(r.ok){txt=await r.text();if(txt&&txt.includes("<item"))break;txt=null}}catch(e){}}
+ if(!txt)return[];
+ const d=new DOMParser().parseFromString(txt,"text/xml"),lim=Date.now()/1000-days*86400;
+ return [...d.querySelectorAll("item")].slice(0,20).map(it=>{const g=t=>(it.querySelector(t)||{}).textContent||"";
+  const h=g("title").replace(/\s-\s[^-]+$/,"").trim(),sm=new DOMParser().parseFromString(g("description"),"text/html").body.textContent.trim().slice(0,300);
+  return {headline:h,summary:sm,url:g("link").trim(),datetime:Date.parse(g("pubDate"))/1000,source:src==="auto"?((g("title").match(/\s-\s([^-]+)$/)||[])[1]||"Noticias").trim():src,id:g("link")||h,ticker:"MERCADO"}}).filter(x=>x.headline&&x.datetime>lim&&(src!=="auto"||isTrusted(x)));
+}
+let feedC={t:0,v:[]};
+async function getFeeds(){
+ if(Date.now()-feedC.t<300000)return feedC.v;
+ const res=(await Promise.all(FEEDS.map(f=>readFeed(f[0],f[1]).catch(()=>[])))).flat(),k=new Set();
+ const v=res.filter(x=>{const h=x.headline.toLowerCase();if(k.has(h))return false;k.add(h);return true});
+ feedC={t:v.length?Date.now():Date.now()-240000,v};return v;
+}
+const FED=[["Reserva Federal","https://www.federalreserve.gov/feeds/press_monetary.xml",60],["Reserva Federal","https://www.federalreserve.gov/feeds/press_all.xml",14]];
+const PRES=[["Casa Blanca","https://www.whitehouse.gov/presidential-actions/feed/",14],["Casa Blanca","https://www.whitehouse.gov/news/feed/",14]];
+const FOMC=["2026-01-28","2026-03-18","2026-04-29","2026-06-17","2026-07-29","2026-09-16","2026-10-28","2026-12-09"];
+function renderFomc(){const t=Date.now(),nx=FOMC.find(d=>new Date(d+"T20:00:00").getTime()>=t);if(!nx){$("fomc").textContent="Calendario FOMC 2026 completado; consulta el de 2027 en federalreserve.gov.";return}
+ const days=Math.ceil((new Date(nx+"T20:00:00").getTime()-t)/86400000);
+ $("fomc").innerHTML=`<b>Próxima decisión de tasas (FOMC):</b> ${new Date(nx+"T12:00:00").toLocaleDateString("es-DO",{day:"numeric",month:"long",year:"numeric"})} · ${days<=1?"hoy o mañana":"en "+days+" días"} <span class="dt">(verifica en federalreserve.gov)</span>`}
+let govC={t:0,f:[],p:[]};
+async function getGov(){
+ if(Date.now()-govC.t<300000)return govC;
+ const run=async l=>{const r=(await Promise.all(l.map(f=>readFeed(f[0],f[1],f[2]).catch(()=>[])))).flat(),k=new Set();return r.filter(x=>{const h=x.headline.toLowerCase();if(k.has(h))return false;k.add(h);return true}).sort((a,b)=>b.datetime-a.datetime)};
+ const [f,p]=await Promise.all([run(FED),run(PRES)]);
+ govC={t:(f.length||p.length)?Date.now():Date.now()-240000,f,p};return govC;
+}
+async function renderGov(){
+ renderFomc();const g=await getGov(),f=g.f.slice(0,6),p=g.p.slice(0,6);
+ await translateAll([...f,...p]);
+ const U=n=>/^https?:\/\//.test(n.url||"")?escapeHtml(n.url):"#";
+ const li=n=>`<div class="news-item"><a href="${U(n)}" target="_blank" rel="noopener">${escapeHtml(n.hes||n.headline)}</a><div class="meta">${escapeHtml(n.source)} · ${ago(n.datetime)}</div>${n.ses?`<div class="meta">${escapeHtml(n.ses)}</div>`:""}</div>`;
+ const dec=g.f.find(n=>n.source==="Reserva Federal"&&/fomc|open market committee|monetary policy|federal funds|interest rate/i.test(n.headline+" "+n.summary));
+ $("fedlast").innerHTML=dec?`<b>Último comunicado de política monetaria:</b> <a href="${U(dec)}" target="_blank" rel="noopener" style="color:#c5ddff">${escapeHtml(dec.hes||dec.headline)}</a> (${ago(dec.datetime)})`:"Sin comunicados de política monetaria recientes.";
+ $("fedlist").innerHTML=f.length?f.map(li).join(""):'<div class="empty">Sin datos (los servicios de lectura pueden estar caídos).</div>';
+ $("preslist").innerHTML=p.length?p.map(li).join(""):'<div class="empty">Sin datos (los servicios de lectura pueden estar caídos).</div>';
+ if(dec&&Date.now()/1000-dec.datetime<3*3600)alertUser("Fed: nuevo comunicado monetario",dec.hes||dec.headline,"fed-"+dec.id);
+ const np=g.p[0];if(np&&Date.now()/1000-np.datetime<3*3600)alertUser("Presidente/Casa Blanca: nuevo",np.hes||np.headline,"pres-"+np.id);
+}
+const HOL=new Set(["2026-01-01","2026-01-19","2026-02-16","2026-04-03","2026-05-25","2026-06-19","2026-07-03","2026-09-07","2026-11-26","2026-12-25"]),EARLY={"2026-11-27":13,"2026-12-24":13};
+const NYF=new Intl.DateTimeFormat("en-US",{timeZone:"America/New_York",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23",weekday:"short"});
+function nyp(t){const o={};NYF.formatToParts(new Date(t)).forEach(x=>o[x.type]=x.value);return {y:+o.year,m:+o.month,d:+o.day,h:+o.hour,mi:+o.minute,wd:o.weekday,key:`${o.year}-${o.month}-${o.day}`}}
+function nyUtc(y,m,d,h,mi){let t=Date.UTC(y,m-1,d,h+5,mi);const p=nyp(t);return t+((h*60+mi)-(p.h*60+p.mi))*60000}
+function sessions(){const out=[],b=nyp(Date.now());
+ for(let i=-1;i<12&&out.length<5;i++){const p=nyp(Date.UTC(b.y,b.m-1,b.d+i,12));if(p.wd==="Sat"||p.wd==="Sun"||HOL.has(p.key))continue;
+  out.push({o:nyUtc(p.y,p.m,p.d,9,30),c:nyUtc(p.y,p.m,p.d,EARLY[p.key]||16,0),early:!!EARLY[p.key]})}
+ return out}
+function cd(ms){const m=Math.max(0,Math.round(ms/60000)),d=Math.floor(m/1440),h=Math.floor(m%1440/60),mi=m%60;return d?`${d} d ${h} h`:h?`${h} h ${mi} min`:`${mi} min`}
+function pcNotify(t,b){if(!("Notification"in window))return;if(Notification.permission==="granted")new Notification(t,{body:b,requireInteraction:true,tag:"mkt"});else if(Notification.permission==="default")Notification.requestPermission()}
+$("mktalert").checked=localStorage.getItem("radar_mktalert")!=="0";
+$("mktalert").addEventListener("change",()=>{localStorage.setItem("radar_mktalert",$("mktalert").checked?"1":"0");if($("mktalert").checked&&"Notification"in window&&Notification.permission==="default")Notification.requestPermission()});
+function tickHours(){
+ const now=Date.now(),ss=sessions(),hm=t=>new Date(t).toLocaleTimeString("es-DO",{hour:"numeric",minute:"2-digit"});let nx=null;
+ for(const x of ss){if(now<x.o){nx={a:"Abre",t:x.o,x};break}if(now<x.c){nx={a:"Cierra",t:x.c,x};break}}
+ if(nx){const same=new Date(nx.t).toDateString()===new Date().toDateString(),day=same?"hoy":new Date(nx.t).toLocaleDateString("es-DO",{weekday:"long",day:"numeric",month:"short"});
+  $("mhours").innerHTML=`🕒 <b>${nx.a}</b> ${day} a las <b>${hm(nx.t)}</b> (tu hora) · en <b>${cd(nx.t-now)}</b><br><span class="dt">Sesión regular: ${hm(nx.x.o)} – ${hm(nx.x.c)} tu hora (9:30 a. m. – ${nx.x.early?"1:00":"4:00"} p. m. Nueva York)${nx.x.early?" · cierre anticipado":""}. Pre-mercado desde 4:00 a. m. y post-cierre hasta 8:00 p. m. hora de Nueva York.</span>`}
+ if($("mktalert").checked)ss.forEach(x=>[[x.o,"abrió"],[x.c,"cerró"]].forEach(([t,v])=>{const d=now-t,k="mkt-"+t;if(d>=0&&d<15*60000&&!seen[k]){seen[k]=now;try{localStorage.setItem("radar_seen",JSON.stringify(seen))}catch(e){}
+  const q=mq.SPY,ch=q&&Number.isFinite(q.dp)?` S&P 500 (SPY): ${(q.dp>=0?"+":"")+q.dp.toFixed(2)}%.`:"";
+  pcNotify(v==="abrió"?"🔔 ¡La bolsa de EE. UU. abrió!":"🔔 La bolsa de EE. UU. cerró",(v==="abrió"?"Apertura":"Cierre")+" a las "+hm(t)+" (tu hora)."+(v==="abrió"?"":ch))}}));
+}
+setInterval(tickHours,15000);setTimeout(tickHours,200);
+const FXU="https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@";
+async function fxAt(daysAgo){
+ for(let k=0;k<3;k++){const d=new Date(Date.now()-(daysAgo+k)*86400000).toISOString().slice(0,10);
+  try{const r=await _f(`${FXU}${d}/v1/currencies/usd.json`);if(r.ok){const j=await r.json();if(j&&j.usd&&j.usd.dop)return {d:j.date||d,v:j.usd.dop}}}catch(e){}}
+ return null}
+async function loadFx(){
+ try{
+  let cur=null;
+  try{const r=await _f("https://open.er-api.com/v6/latest/USD");const j=await r.json();if(j.rates&&j.rates.DOP)cur={v:j.rates.DOP,t:(j.time_last_update_unix||0)*1000}}catch(e){}
+  const h=await Promise.all([30,21,14,7,1].map(fxAt));
+  if(!cur){const n=await fxAt(0);if(n)cur={v:n.v,t:Date.parse(n.d)}}
+  if(!cur){$("fxverdict").textContent="No se pudo obtener la tasa (servicio no disponible). Reintentando en unos minutos.";setTimeout(loadFx,5*60000);return}
+  renderFx(cur,h);
+ }catch(e){}
+}
+function renderFx(cur,h){
+ const pct=(a,b)=>a&&b?(a/b-1)*100:null,V=x=>x?x.v:null;
+ const c1=pct(cur.v,V(h[4])),c7=pct(cur.v,V(h[3])),c30=pct(cur.v,V(h[0]));
+ const ref=c7!==null?c7:c1!==null?c1:c30;
+ let v,col;
+ if(ref===null){v="Sin tendencia disponible";col="var(--muted)"}
+ else if(ref>=.15){v="💪 El dólar se FORTALECE frente al peso";col="var(--green)"}
+ else if(ref<=-.15){v="📉 El dólar se DEBILITA frente al peso";col="var(--red)"}
+ else{v="➖ El dólar está ESTABLE frente al peso";col="var(--accent)"}
+ $("fxstate").textContent="1 US$ = RD$ "+cur.v.toFixed(2);
+ $("fxverdict").innerHTML=`<span style="color:${col}">${v}</span><small>Referencia: ${c7!==null?"últimos 7 días":"último dato disponible"}</small>`;
+ const box=(t,c,old)=>{if(c===null)return `<div class="obox none"><div class="tk">${t}</div><div class="vd">—</div></div>`;const up=c>=.15,dn=c<=-.15;return `<div class="obox ${up?"up":dn?"down":"flat"}"><div class="tk">${t}</div><div class="vd">${(c>=0?"+":"")+c.toFixed(2)}%</div><div class="dt">${up?"Dólar más fuerte":dn?"Dólar más débil":"Sin cambio relevante"} · antes RD$ ${old.toFixed(2)}</div></div>`};
+ $("fxgrid").innerHTML=`<div class="obox flat"><div class="tk">Tasa actual</div><div class="vd">RD$ ${cur.v.toFixed(2)}</div><div class="dt">por cada 1 US$ · ${cur.t?new Date(cur.t).toLocaleDateString("es-DO"):""}</div></div>`+box("vs ayer",c1,V(h[4])||0)+box("vs 7 días",c7,V(h[3])||0)+box("vs 30 días",c30,V(h[0])||0);
+ const pts=[V(h[0]),V(h[1]),V(h[2]),V(h[3]),V(h[4]),cur.v].filter(x=>x);
+ if(pts.length>=3){const mn=Math.min(...pts),mx=Math.max(...pts),rg=(mx-mn)||1,W=300,H=56,xy=pts.map((y,i)=>[(i/(pts.length-1)*(W-10)+5).toFixed(1),(H-8-((y-mn)/rg)*(H-16)+4).toFixed(1)]);
+  $("fxspark").innerHTML=`<svg viewBox="0 0 ${W} ${H}" style="width:100%;max-width:420px;height:64px"><polyline fill="none" stroke="#65a9ff" stroke-width="2" points="${xy.map(a=>a.join(",")).join(" ")}"/><circle cx="${xy[xy.length-1][0]}" cy="${xy[xy.length-1][1]}" r="3.5" fill="#65a9ff"/></svg><div class="dt">Últimos 30 días (RD$ ${mn.toFixed(2)} – ${mx.toFixed(2)})</div>`}
+ $("fxnote").innerHTML="Si el dólar sube frente al peso, tus activos en USD valen más en pesos aunque su precio en dólares no cambie; si baja, ocurre lo contrario. Arriba, tasas del Banco Central y bancos locales; abajo, tasa internacional de referencia para medir la tendencia.";
+}
+const ELD=["https://eldinero.com.do/category/finanzas/feed/","https://eldinero.com.do/feed/"];
+const PXS=["https://api.allorigins.win/raw?url=","https://corsproxy.io/?url=","https://api.codetabs.com/v1/proxy?quest="];
+async function proxied(url){for(const px of PXS){try{const r=await _f(px+encodeURIComponent(url));if(r.ok){const t=await r.text();if(t.includes("<item"))return t}}catch(e){}}return null}
+const num=x=>parseFloat(String(x).replace(/,/g,""));
+function parseRates(t){
+ const o={banks:[]},ok=v=>v>30&&v<150;let m;
+ m=t.match(/Compra:?\s*(?:RD\$)?\s*([\d.]+)[^V\d]{0,12}Venta:?\s*(?:RD\$)?\s*([\d.]+)/i);if(m&&ok(num(m[1]))&&ok(num(m[2])))o.bc={b:num(m[1]),s:num(m[2])};
+ m=t.match(/RD\$\s*([\d.]+)\s+en el Banco de Reservas[\s\S]{0,90}?compra[^R]{0,40}RD\$\s*([\d.]+)/i);if(m)o.banks.push({n:"Banreservas",s:num(m[1]),b:num(m[2])});
+ m=t.match(/Banco Popular[^R]{0,40}RD\$\s*([\d.]+)\s+para la venta[\s\S]{0,30}?RD\$\s*([\d.]+)\s+para la compra/i);if(m)o.banks.push({n:"Banco Popular",s:num(m[1]),b:num(m[2])});
+ m=t.match(/BHD vende el d[oó]lar a RD\$\s*([\d.]+)\s*y la compra en RD\$\s*([\d.]+)/i);if(m)o.banks.push({n:"BHD",s:num(m[1]),b:num(m[2])});
+ o.banks=o.banks.filter(x=>ok(x.s)&&ok(x.b));return o}
+const BC_URL="https://www.bancentral.gov.do/SectorExterno/HistoricoTasas";
+const bcAbs=(u,b)=>{try{return new URL(u,b).href}catch(e){return null}};
+function findRows(o,d=0){
+ if(d>5||!o)return null;
+ if(Array.isArray(o)){if(o.length>=2&&o[0]&&typeof o[0]==="object"){const k=Object.keys(o[0]);if(k.some(x=>/fecha|date/i.test(x))&&k.some(x=>/compra|buy/i.test(x))&&k.some(x=>/venta|sell/i.test(x)))return o}
+  for(const x of o){const r=findRows(x,d+1);if(r)return r}return null}
+ if(typeof o==="object"){for(const k in o){const r=findRows(o[k],d+1);if(r)return r}}
+ return null}
+function pdate(v){const s=String(v),m=s.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})/);if(m)return Date.UTC(+m[3],+m[2]-1,+m[1]);const t=Date.parse(s);return Number.isFinite(t)?t:null}
+function normRows(rows){
+ return rows.map(r=>{const k=Object.keys(r),g=re=>{const key=k.find(x=>re.test(x)&&(v=>v>30&&v<150)(parseFloat(String(r[x]).replace(",","."))));return key?parseFloat(String(r[key]).replace(",",".")):null};
+  const dk=k.find(x=>/fecha|date/i.test(x));return {t:pdate(r[dk]),b:g(/compra|buy/i),s:g(/venta|sell/i)}}).filter(x=>x.t&&x.b&&x.s).sort((a,b)=>b.t-a.t)}
+async function tryEndpoint(u){const t=await proxyGet(u,x=>/^\s*[\[{]/.test(x));if(!t)return null;try{const rows=findRows(JSON.parse(t));if(rows){const n=normRows(rows);if(n.length>=2)return n}}catch(e){}return null}
+async function discoverBc(){
+ const saved=localStorage.getItem("radar_bcep");if(saved){const n=await tryEndpoint(saved);if(n)return n}
+ const html=await proxyGet(BC_URL,t=>t.includes("<script"));if(!html)return null;
+ const doc=new DOMParser().parseFromString(html,"text/html");
+ const srcs=[...doc.querySelectorAll("script[src]")].map(x=>bcAbs(x.getAttribute("src"),BC_URL)).filter(u=>u&&/bancentral\.gov\.do/.test(u)&&!/jquery|bootstrap|moment|chart|datatables|highcharts|popper|sweetalert/i.test(u)).slice(0,8);
+ const texts=[...doc.querySelectorAll("script:not([src])")].map(x=>x.textContent);
+ for(const u of srcs){const t=await proxyGet(u,x=>x.length>50);if(t)texts.push(t)}
+ const cands=new Set();
+ texts.forEach(t=>{for(const m of t.matchAll(/["'`]((?:https?:)?\/\/?[^"'`\s<>]*(?:tasa|cambio|historic)[^"'`\s<>]*)["'`]/gi)){const u=bcAbs(m[1].replace(/\$\{[^}]*\}.*$/,""),BC_URL);if(u&&!/\.(js|css|png|jpe?g|svg|gif|woff2?)(\?|$)/i.test(u)&&u!==BC_URL)cands.add(u)}});
+ for(const u of [...cands].slice(0,12)){const n=await tryEndpoint(u);if(n){try{localStorage.setItem("radar_bcep",u)}catch(e){}return n}}
+ return null}
+async function loadBcrd(){
+ const n=await discoverBc().catch(()=>null);
+ if(n){$("bcrd").dataset.ok="1";renderBc(n);return}
+ if(!$("bcrd").dataset.ok)$("bcrd").innerHTML=`<div class="empty">No pude leer automáticamente la tabla del Banco Central: su página carga los datos con JavaScript y no los expone de forma que esta página pueda leerlos. <a href="${BC_URL}" target="_blank" rel="noopener" style="color:#c5ddff">Abrir Histórico de tasas oficial →</a></div>`;
+ setTimeout(loadBcrd,10*60000)}
+function renderBc(n){
+ const L=n[0],P=n[1],f4=x=>"RD$ "+x.toFixed(4),ch=(a,b)=>b?{d:a-b,p:(a/b-1)*100}:null,fmt=t=>new Date(t).toLocaleDateString("es-DO",{timeZone:"UTC",day:"numeric",month:"short",year:"numeric"});
+ bcRef=L.s;if(infoData)setTimeout(renderInfo,0);
+ const d1=ch(L.s,P.s),R=n[Math.min(7,n.length-1)],d7=n.length>5?ch(L.s,R.s):null,ref=d7||d1,stale=Date.now()-L.t>4*86400000;
+ let v,col;if(!ref){v="Sin tendencia";col="var(--muted)"}else if(ref.p>=.15){v="💪 El dólar se FORTALECE frente al peso (Banco Central)";col="var(--green)"}else if(ref.p<=-.15){v="📉 El dólar se DEBILITA frente al peso (Banco Central)";col="var(--red)"}else{v="➖ El dólar está ESTABLE frente al peso (Banco Central)";col="var(--accent)"}
+ const box=(t,c,sub)=>{if(!c)return `<div class="obox none"><div class="tk">${t}</div><div class="vd">—</div></div>`;const up=c.p>=.15,dn=c.p<=-.15;return `<div class="obox ${up?"up":dn?"down":"flat"}"><div class="tk">${t}</div><div class="vd">${(c.p>=0?"+":"")+c.p.toFixed(2)}%</div><div class="dt">${(c.d>=0?"+":"")+c.d.toFixed(4)} RD$ · ${sub}</div></div>`};
+ $("bcrd").innerHTML=`<div class="mverdict" style="font-size:16px"><span style="color:${col}">${v}</span><small>Dato oficial del ${fmt(L.t)}${stale?" · ⚠ más de 4 días":""}</small></div>
+ <div class="mgrid"><div class="obox flat"><div class="tk">Compra oficial</div><div class="vd">${f4(L.b)}</div><div class="dt">Banco Central</div></div><div class="obox flat"><div class="tk">Venta oficial</div><div class="vd">${f4(L.s)}</div><div class="dt">Spread ${(L.s-L.b).toFixed(4)}</div></div>${box("Venta vs día anterior",d1,fmt(P.t))}${box("Venta vs 7 registros atrás",d7,fmt(R.t))}</div>
+ <div style="overflow-x:auto;margin-top:12px"><table><thead><tr><th>Fecha</th><th>Compra</th><th>Venta</th></tr></thead><tbody>${n.slice(0,7).map(x=>`<tr><td>${fmt(x.t)}</td><td>${f4(x.b)}</td><td>${f4(x.s)}</td></tr>`).join("")}</tbody></table></div>
+ <div class="note">Fuente única: <a href="${BC_URL}" target="_blank" rel="noopener" style="color:#c5ddff">Banco Central de la República Dominicana · Histórico de tasas</a>. El Banco Central publica una tasa por día hábil.</div>`}
+let infoData=null,bcRef=null;
+async function loadInfo(){
+ let h=null;
+ for(const px of PXS){try{const r=await _f(px+encodeURIComponent("https://www.infodolar.com.do/"));if(r.ok){const t=await r.text();if(t.includes("<tr")){h=t;break}}}catch(e){}}
+ if(!h){if(!infoData)$("info").innerHTML='<div class="empty">No se pudo leer InfoDolar ahora. <a href="https://www.infodolar.com.do/" target="_blank" rel="noopener" style="color:#c5ddff">Abrir InfoDolar →</a></div>';setTimeout(loadInfo,5*60000);return}
+ const d=new DOMParser().parseFromString(h,"text/html"),rows=[],seenN=new Set(),ok=v=>v!==null&&v>30&&v<150;let avg=null,t=null;
+ d.querySelectorAll("tr").forEach(tr=>{const c=[...tr.children];if(c.length<3)return;
+  const name=c[0].textContent.replace(/\s+/g," ").trim(),mm=x=>{const m=(c[x]?c[x].textContent:"").match(/\$\s*(\d+(?:\.\d+)?)/);return m?num(m[1]):null};
+  const b=mm(1),s=mm(2);if(!name||name.length>60||(!ok(b)&&!ok(s)))return;
+  const iso=(tr.textContent.match(/\((20\d\d-\d\d-\d\dT[\d:+-]+)\)/)||[])[1],tm=iso?Date.parse(iso):null;
+  if(/promedio/i.test(name)){avg={b:ok(b)?b:null,s:ok(s)?s:null};if(tm)t=tm;return}
+  if(seenN.has(name))return;seenN.add(name);rows.push({n:name,b:ok(b)?b:null,s:ok(s)?s:null,t:tm})});
+ if(!rows.length){setTimeout(loadInfo,5*60000);return}
+ infoData={rows,avg,t:t||Math.max(...rows.map(r=>r.t||0))};renderInfo();
+}
+function renderInfo(){
+ const {rows,avg,t}=infoData,f=x=>x===null?"—":"RD$ "+x.toFixed(2),ref=bcRef;
+ const sorted=[...rows].sort((a,b)=>(a.s??999)-(b.s??999)),withB=rows.filter(r=>r.b!==null),withS=rows.filter(r=>r.s!==null);
+ const bestSell=withB.length?withB.reduce((a,b)=>b.b>a.b?b:a):null,bestBuy=withS.length?withS.reduce((a,b)=>b.s<a.s?b:a):null;
+ const old=t&&Date.now()-t>6*3600000;
+ $("info").innerHTML=(avg?`<div class="overall"><b>Promedio InfoDolar:</b> compra ${f(avg.b)} · venta ${f(avg.s)}${ref?` · Banco Central (venta): RD$ ${ref.toFixed(2)}`:""}</div>`:"")+
+ (bestSell&&bestBuy?`<div class="overall">🏆 <b>Mejor para VENDER tus dólares:</b> ${escapeHtml(bestSell.n)} paga ${f(bestSell.b)} · <b>Mejor para COMPRAR dólares:</b> ${escapeHtml(bestBuy.n)} vende a ${f(bestBuy.s)}</div>`:"")+
+ `<div style="overflow-x:auto"><table><thead><tr><th>Entidad</th><th>Compra</th><th>Venta</th><th>Spread</th><th>Venta vs Banco Central</th></tr></thead><tbody>${sorted.map(r=>`<tr><td><span class="ticker">${escapeHtml(r.n)}</span></td><td${r===bestSell?' style="color:var(--green);font-weight:700"':""}>${f(r.b)}</td><td${r===bestBuy?' style="color:var(--green);font-weight:700"':""}>${f(r.s)}</td><td>${r.b!==null&&r.s!==null?f(r.s-r.b):"—"}</td><td>${ref&&r.s!==null?((r.s-ref>=0?"+":"")+((r.s/ref-1)*100).toFixed(2)+"%"):"—"}</td></tr>`).join("")}</tbody></table></div>`+
+ `<div class="note">Fuente: <a href="https://www.infodolar.com.do/" target="_blank" rel="noopener" style="color:#c5ddff">InfoDolar.com.do</a>${t?" · actualizado "+new Date(t).toLocaleString("es-DO"):""}${old?" · <b>⚠ dato con más de 6 horas</b>":""}. Compra = lo que te pagan por tus dólares; venta = lo que cobran por dártelos. InfoDolar indica que los precios son orientativos: confirma la tasa en la entidad antes de operar.</div>`;
+}
+const MES=["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+let INF=[[1,.40,null],[2,.03,null],[3,.27,4.63],[4,.49,5.11],[5,.31,5.35],[6,.51,5.67],[7,.19,5.47],[8,.38,5.13],[9,.33,5.12],[10,.58,5.14]];
+try{(JSON.parse(localStorage.getItem("radar_inf_extra")||"[]")).forEach(x=>{if(x[0]===INF.length+1)INF.push(x)})}catch(e){}
+function renderInf(){
+ const rows=INF.map(r=>({m:r[0],v:r[1],y:r[2]}));let acc=1;rows.forEach(r=>{acc*=1+r.v/100;r.a=(acc-1)*100});const KA={5:1.50,7:2.21,8:2.59};rows.forEach(r=>{if(KA[r.m]!==undefined)r.a=KA[r.m]});
+ const L=rows[rows.length-1],P=rows[rows.length-2],dpp=L.v-P.v;
+ const meta=y=>y===null?"—":y>5?"🔺 Por encima":y<3?"🔻 Por debajo":"✅ Dentro";
+ $("infhead").innerHTML=`Inflación de ${MES[L.m-1]} 2026: <span style="color:var(--accent)">${L.v.toFixed(2)}%</span> mensual <small>${dpp>=0?"▲ sube":"▼ baja"} ${Math.abs(dpp).toFixed(2)} pts frente a ${MES[P.m-1]}${L.y!==null?" · interanual "+L.y.toFixed(2)+"% ("+meta(L.y).replace(/^\S+\s/,"").toLowerCase()+" del rango meta)":""} · acumulada ${L.a.toFixed(2)}%</small>`;
+ const n=rows.length,W=360,H=120,bw=Math.min(28,(W-20)/n-6),mx=Math.max(.6,...rows.map(r=>r.v));
+ $("infchart").innerHTML=`<svg viewBox="0 0 ${W} ${H}" style="width:100%;max-width:520px;height:auto">${rows.map((r,i)=>{const x=14+i*((W-28)/n)+((W-28)/n-bw)/2,h=Math.max(2,r.v/mx*(H-44)),y=H-22-h,c=r.v>=.45?"#ff6b78":r.v<=.2?"#3dd598":"#65a9ff";return `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${bw.toFixed(1)}" height="${h.toFixed(1)}" rx="3" fill="${c}"/><text x="${(x+bw/2).toFixed(1)}" y="${(y-4).toFixed(1)}" fill="#eef5ff" font-size="9" text-anchor="middle">${r.v.toFixed(2)}</text><text x="${(x+bw/2).toFixed(1)}" y="${H-8}" fill="#9db0c9" font-size="9" text-anchor="middle">${MES[r.m-1].slice(0,3)}</text>`}).join("")}</svg><div class="dt">Variación mensual del IPC (%). Rojo: ≥ 0.45 · Verde: ≤ 0.20</div>`;
+ const next=INF.length<12?MES[INF.length]:null;
+ $("inftable").innerHTML=[...rows].reverse().map(r=>`<tr><td><span class="ticker">${MES[r.m-1][0].toUpperCase()+MES[r.m-1].slice(1)} 2026</span></td><td>${r.v.toFixed(2)}%</td><td>${r.a.toFixed(2)}%</td><td>${r.y!==null?r.y.toFixed(2)+"%":"—"}</td><td>${meta(r.y)}</td></tr>`).join("")+(next?`<tr><td><span class="ticker">${next[0].toUpperCase()+next.slice(1)} 2026</span></td><td colspan="4" style="text-align:left;color:var(--muted)">⏳ Pendiente: el Banco Central lo publica normalmente entre el 7 y el 15 del mes siguiente. Se completa solo al salir.</td></tr>`:"");
+ $("infnote").innerHTML=`Cifras del IPC publicadas por el <a href="https://www.bancentral.gov.do/a/d/2534-precios" target="_blank" rel="noopener" style="color:#c5ddff">Banco Central de la República Dominicana</a>, recogidas de sus comunicados difundidos por la prensa (octubre 2026: nota del BCRD del 9 de noviembre de 2026, variación mensual 0.58% e interanual 5.14%). La acumulada es la publicada por el Banco Central en mayo, julio y agosto; en los demás meses se calcula encadenando los meses y puede diferir por redondeo; "—" indica que no pude confirmar ese dato. Verifica en el sitio oficial antes de usar las cifras en decisiones.`;
+}
+async function loadInf(){
+ const sd=await staticData();if(mergeInfl(sd)){renderInf();return}
+ const next=INF.length<12?MES[INF.length]:null;if(!next)return;
+ const items=[];
+ const cnt={},re=new RegExp("\\b"+next+"\\b","i");
+ items.forEach(it=>{const t=it.headline+" "+it.summary;if(!re.test(t))return;const m=t.match(/variaci[oó]n[^.%]{0,50}?(?:de|fue de)\s*(-?\d+[.,]\d{1,2})\s*%/i);if(!m)return;const v=num(m[1].replace(",","."));if(!(v>-1.5&&v<3))return;
+  const y=(t.match(/interanual[^.%]{0,60}?(\d+[.,]\d{1,2})\s*%/i)||[])[1];const k=v+"|"+(y?num(y.replace(",",".")):"");cnt[k]=(cnt[k]||0)+1});
+ const best=Object.entries(cnt).sort((a,b)=>b[1]-a[1])[0];
+ if(best&&best[1]>=2){const [v,y]=best[0].split("|");INF.push([INF.length+1,parseFloat(v),y?parseFloat(y):null]);
+  try{const ex=JSON.parse(localStorage.getItem("radar_inf_extra")||"[]");ex.push(INF[INF.length-1]);localStorage.setItem("radar_inf_extra",JSON.stringify(ex))}catch(e){}
+  renderInf();alertUser("📈 Nueva inflación del Banco Central",`${next[0].toUpperCase()+next.slice(1)}: ${v}% mensual`,"inf-"+next)}
+}
+renderInf();setTimeout(loadInf,1200);setInterval(loadInf,60*60000);
+const FUEL_URL="https://micm.gob.do/gobierno-reajusta-combustibles-premium/";
+const FUEL=[["Gasolina Premium","Gasolina\\s+Premium"],["Gasolina Regular","Gasolina\\s+Regular"],["Gasoil Regular","Gasoil\\s+Regular"],["Gasoil Óptimo","Gasoil\\s+[ÓóOo]ptimo"],["Avtur","Avtur"],["Kerosene","Kerosene"],["Fuel Oíl #6","Fuel\\s+O[ií]l\\s+#?\\s*6"],["Fuel Oíl 1%S","Fuel\\s+O[ií]l\\s+1\\s*%"],["GLP (gas licuado)","Gas\\s+Licuado"],["Gas Natural","Gas\\s+Natural"]];
+function parseFuel(t){
+ const i=t.search(/siguientes precios/i),s=i>=0?t.slice(i):t,out=[];
+ FUEL.forEach(([n,re])=>{const m=s.match(new RegExp(re+".{0,40}?RD\\$\\s*([\\d,.]+?)\\s*por\\s+(gal[oó]n|m3|m³)\\s+(sube|baja|mantiene)(?:\\s{0,3}RD\\$\\s*([\\d,.]+))?","i"));
+  if(m){const p=num(m[1]);if(p>5&&p<2000)out.push({n,p,u:/gal/i.test(m[2])?"galón":"m³",k:m[3].toLowerCase(),d:m[4]?num(m[4]):0})}});
+ return {out,w:(t.match(/semana del\s+(\d{1,2}\s+al\s+\d{1,2}\s+de\s+[a-záéíóú]+(?:\s+de\s+\d{4})?)/i)||[])[1]}}
+async function proxyGet(url,test){for(const px of PXS){try{const r=await _f(px+encodeURIComponent(url));if(r.ok){const t=await r.text();if(test(t))return t}}catch(e){}}return null}
+const FUEL_SNAP={w:"7 al 13 de noviembre de 2026",t:Date.parse("2026-11-06T21:00:00Z"),link:FUEL_URL,snap:true,out:[["Gasolina Premium",362.10,"galón","sube",4],["Gasolina Regular",317.50,"galón","mantiene",0],["Gasoil Regular",270.80,"galón","mantiene",0],["Gasoil Óptimo",322.10,"galón","sube",4],["Avtur",340.48,"galón","baja",16.34],["Kerosene",383.00,"galón","baja",17.10],["Fuel Oíl #6",182.39,"galón","baja",12.17],["Fuel Oíl 1%S",222.41,"galón","baja",12.45],["GLP (gas licuado)",135.20,"galón","mantiene",0],["Gas Natural",43.97,"m³","mantiene",0]].map(a=>({n:a[0],p:a[1],u:a[2],k:a[3],d:a[4]}))};
+
+let _sd=null;
+function staticData(){if(!_sd)_sd=fetch("data/data.json",{cache:"no-store"}).then(r=>r.ok?r.json():null).catch(()=>null);return _sd}
+function mergeInfl(j){if(!j||!j.inflation||!Array.isArray(j.inflation.months))return false;const m=new Map(INF.map(r=>[r[0],r]));j.inflation.months.forEach(r=>{if(r&&r[0]&&Number.isFinite(r[1]))m.set(r[0],[r[0],r[1],Number.isFinite(r[2])?r[2]:(m.get(r[0])||[])[2]??null])});INF=[...m.values()].sort((a,b)=>a[0]-b[0]);return true}
+async function loadFuel(){
+ const sd=await staticData();
+ if(sd&&sd.fuel&&Array.isArray(sd.fuel.out)&&sd.fuel.out.length>=4){renderFuel({...sd.fuel,snap:false});loadFuelNews();return}
+ let best=null;const tryText=(txt,link,t)=>{const r=parseFuel(txt);if(r.out.length>=4&&(!best||t>best.t))best={...r,link,t}};
+ const html2txt=h=>new DOMParser().parseFromString(h||"","text/html").body.textContent.replace(/\s+/g," ");
+ for(const f of ["https://micm.gob.do/tag/noticia/feed/","https://micm.gob.do/feed/","https://micm.gob.do/tag/combustibles/feed/"]){
+  if(best)break;const tx=await proxyGet(f,x=>x.includes("<item"));if(!tx)continue;
+  const d=new DOMParser().parseFromString(tx,"text/xml");
+  [...d.querySelectorAll("item")].slice(0,10).forEach(it=>{const c=it.getElementsByTagName("content:encoded")[0],g=x=>(it.querySelector(x)||{}).textContent||"";tryText(html2txt((c&&c.textContent)||g("description")),g("link"),Date.parse(g("pubDate"))||0)})}
+ if(!best){
+  for(const lu of ["https://micm.gob.do/tag/noticia/","https://micm.gob.do/tag/combustibles/","https://micm.gob.do/noticias/"]){
+   if(best)break;const h=await proxyGet(lu,x=>x.includes("<a "));if(!h)continue;
+   const d=new DOMParser().parseFromString(h,"text/html");
+   const links=[...new Set([...d.querySelectorAll("a[href]")].map(a=>bcAbs(a.getAttribute("href"),lu)).filter(u=>u&&/micm\.gob\.do\/[a-z0-9-]{12,}\/?$/i.test(u)&&/combustible|reajust|precio|gasolina|glp|subsid|gasoil/i.test(u)))].slice(0,4);
+   for(const u of links){const ph=await proxyGet(u,x=>/por gal/i.test(x));if(!ph)continue;const doc=new DOMParser().parseFromString(ph,"text/html"),pub=(doc.querySelector('meta[property="article:published_time"]')||{}).content;tryText(doc.body.textContent.replace(/\s+/g," "),u,pub?Date.parse(pub):Date.now())}}}
+ if(!best){const h=await proxyGet(FUEL_URL,x=>/por gal/i.test(x));if(h){const doc=new DOMParser().parseFromString(h,"text/html"),pub=(doc.querySelector('meta[property="article:published_time"]')||{}).content;tryText(doc.body.textContent.replace(/\s+/g," "),FUEL_URL,pub?Date.parse(pub):Date.now())}}
+ if(!best){best=FUEL_SNAP;setTimeout(loadFuel,10*60000)}
+ renderFuel(best);loadFuelNews();
+}
+async function loadFuelNews(){
+ const pool=(await getFeeds().catch(()=>[])).filter(x=>/combustible|gasolina|gasoil|glp|fuel|petr[oó]leo|oil|energ/i.test(x.headline+" "+(x.summary||"")));
+ const out=pool.slice(0,4);
+ $("fuelnews").innerHTML=out.length?`<div class="label" style="margin-bottom:6px">Noticias sobre combustibles (fuentes confiables)</div>`+out.map(n=>`<div class="news-item" style="padding:8px 0"><a href="${/^https?:\/\//.test(n.url)?escapeHtml(n.url):"#"}" target="_blank" rel="noopener">${escapeHtml(n.headline)}</a><div class="meta">${escapeHtml(n.source)} · ${ago(n.datetime)}</div></div>`).join(""):"";
+}
+function renderFuel(b){
+ const f=x=>"RD$ "+x.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+ $("fuelstate").textContent=b.w?"Semana del "+b.w:"Precios vigentes";
+ const up=b.out.filter(x=>x.k==="sube"),dn=b.out.filter(x=>x.k==="baja");
+ $("fuelhead").innerHTML=up.length?`🔺 Suben: ${up.map(x=>x.n+" +RD$"+x.d.toFixed(2)).join(" · ")}`:dn.length?`🔻 Bajan: ${dn.map(x=>x.n+" −RD$"+x.d.toFixed(2)).join(" · ")}`:"➖ Sin cambios esta semana";
+ $("fuelgrid").innerHTML=b.out.map(x=>`<div class="obox ${x.k==="sube"?"down":x.k==="baja"?"up":"flat"}"><div class="tk">${x.n}</div><div class="vd">${f(x.p)}</div><div class="dt">por ${x.u} · ${x.k==="sube"?"▲ sube RD$ "+x.d.toFixed(2):x.k==="baja"?"▼ baja RD$ "+x.d.toFixed(2):"= mantiene su precio"}</div></div>`).join("");
+ const old=Date.now()-b.t>(b.snap?8:10)*86400000,pub=b.t?new Date(b.t).toLocaleDateString("es-DO",{weekday:"long",day:"numeric",month:"long"}):"";
+ $("fuelnote").innerHTML=(b.snap?`<b>⚠ No pude leer el MICM ahora; muestro los últimos precios oficiales que verifiqué.</b> `:"")+`Fuente oficial: <a href="${/^https?:\/\//.test(b.link)?escapeHtml(b.link):"#"}" target="_blank" rel="noopener" style="color:#c5ddff">Ministerio de Industria, Comercio y Mipymes (MICM)</a>${pub?" · publicado el "+pub:""}${old?" · <b>⚠ dato con más de 10 días, puede haber nuevos precios</b>":""}. El MICM anuncia los precios normalmente los viernes y rigen de sábado a viernes. Rojo = más caro; verde = más barato.`;
+ if(!b.snap)try{const k=localStorage.getItem("radar_fuel");if(k&&k!==b.link)alertUser("⛽ Nuevos precios de combustibles",$("fuelhead").textContent,"fuel-"+b.link);localStorage.setItem("radar_fuel",b.link)}catch(e){}
+}
+setTimeout(loadFuel,900);setInterval(loadFuel,60*60000);
+const HEAT=[["AAPL","Tecnología",3500],["MSFT","Tecnología",3600],["NVDA","Tecnología",4300],["AVGO","Tecnología",1400],["ORCL","Tecnología",600],["AMD","Tecnología",300],["CRM","Tecnología",250],
+["GOOGL","Comunicaciones",2300],["META","Comunicaciones",1700],["NFLX","Comunicaciones",500],
+["AMZN","Consumo discrecional",2300],["TSLA","Consumo discrecional",1100],["HD","Consumo discrecional",400],["MCD","Consumo discrecional",220],
+["JPM","Financiero",800],["V","Financiero",650],["MA","Financiero",500],["BAC","Financiero",350],["BRK.B","Financiero",1000],
+["LLY","Salud",900],["UNH","Salud",350],["JNJ","Salud",450],["ABBV","Salud",380],["MRK","Salud",250],
+["WMT","Consumo básico",750],["PG","Consumo básico",380],["KO","Consumo básico",300],["COST","Consumo básico",420],
+["XOM","Energía",480],["CVX","Energía",280],["CAT","Industriales",220]].map(a=>({s:a[0],g:a[1],c:a[2]}));
+const SECT=[["XLK","Tecnología"],["XLF","Financiero"],["XLE","Energía"],["XLV","Salud"],["XLY","Consumo discrecional"],["XLP","Consumo básico"],["XLI","Industriales"],["XLU","Servicios públicos"],["XLB","Materiales"],["XLRE","Inmobiliario"],["XLC","Comunicaciones"]].map(a=>({s:a[0],n:a[1]}));
+let hq={},heatBusy=false;
+function hcol(dp){if(!Number.isFinite(dp))return "#2a3140";const t=Math.max(-1,Math.min(1,dp/3)),a=t<0?[242,54,69]:[8,153,129],b=[65,69,84],k=Math.abs(t);return `rgb(${[0,1,2].map(i=>Math.round(b[i]+(a[i]-b[i])*k)).join(",")})`}
+function worst(row,sum,side){const mx=Math.max(...row.map(r=>r.a)),mn=Math.min(...row.map(r=>r.a));return Math.max(side*side*mx/(sum*sum),sum*sum/(side*side*mn))}
+function squarify(items,x,y,w,h){
+ const total=items.reduce((a,b)=>a+b.v,0),k=w*h/total,rest=items.map(i=>({...i,a:i.v*k})).sort((a,b)=>b.a-a.a),out=[];
+ while(rest.length){const side=Math.min(w,h);let row=[rest.shift()],sum=row[0].a;
+  while(rest.length){const n=rest[0],ns=sum+n.a;if(worst([...row,n],ns,side)<=worst(row,sum,side)){row.push(rest.shift());sum=ns}else break}
+  const th=sum/side;let off=0;
+  row.forEach(r=>{const len=r.a/th;out.push(w>=h?{...r,x,y:y+off,w:th,h:len}:{...r,x:x+off,y,w:len,h:th});off+=len});
+  if(w>=h){x+=th;w-=th}else{y+=th;h-=th}}
+ return out}
+function tile(x,y,w,h,s,q,sub){
+ const dp=q&&Number.isFinite(q.dp)?q.dp:NaN,fs=Math.max(8,Math.min(w/4.2,h/2.6,20));
+ const txt=w>34&&h>22?`<b style="font-size:${fs.toFixed(0)}px">${s}</b>${h>fs*2.6&&w>46?`<span style="font-size:${Math.max(8,fs*.7).toFixed(0)}px">${Number.isFinite(dp)?(dp>=0?"+":"")+dp.toFixed(2)+"%":"—"}</span>`:""}`:"";
+ return `<a href="https://finviz.com/quote.ashx?t=${encodeURIComponent(s)}" target="_blank" rel="noopener" title="${s}${q&&q.c?" · $"+Number(q.c).toFixed(2):""}${Number.isFinite(dp)?" · "+(dp>=0?"+":"")+dp.toFixed(2)+"%":""}${sub?" · "+sub:""}" style="position:absolute;left:${x.toFixed(1)}px;top:${y.toFixed(1)}px;width:${Math.max(0,w-1).toFixed(1)}px;height:${Math.max(0,h-1).toFixed(1)}px;background:${hcol(dp)};color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;text-decoration:none;overflow:hidden;line-height:1.15">${txt}</a>`}
+let met={},metT={},lastMs=[],fillBusy=false;
+function renderPort(){$("heatport").innerHTML=assets.map(a=>{const q=quotes[a.s],ath=athOf(a.s,q&&q.c),dp=q&&Number.isFinite(q.dp)?q.dp:NaN;return `<div class="obox" style="background:${hcol(dp)};border-color:transparent;text-align:center"><div class="tk">${a.s}</div><div class="vd" style="color:#fff;margin:4px 0">${Number.isFinite(dp)?(dp>=0?"+":"")+dp.toFixed(2)+"%":"—"}</div><div class="dt" style="color:#e6eefc">${q&&q.c?"$"+q.c.toFixed(2):""}</div>${ath?`<div class="dt" style="color:#fff;margin-top:4px;font-size:11px">${ath.dd.toFixed(1)}% vs ${ath.k}</div>`:""}</div>`}).join("");}
+async function getMet(syms){const t=config().token,need=syms.filter(x=>!met[x]||Date.now()-metT[x]>6*3600000);
+ for(let i=0;i<need.length;i+=5){await Promise.all(need.slice(i,i+5).map(async x=>{try{const r=await fetch(`https://finnhub.io/api/v1/stock/metric?symbol=${encodeURIComponent(x)}&metric=all&token=${encodeURIComponent(t)}`);if(r.ok){const j=await r.json();if(j&&j.metric){met[x]=j.metric;metT[x]=Date.now()}}}catch(e){}}))}}
+function athOf(x,px){const m=met[x];if(!m||!px)return null;const ath=m.allTimeHigh>0,hi=ath?m.allTimeHigh:m["52WeekHigh"];if(!(hi>0))return null;return {hi,dd:(px/hi-1)*100,k:ath?"máx. histórico":"máx. 52 sem"}}
+function renderMovers(){
+ const li=x=>{const a=athOf(x.s,x.c);return `<div style="padding:6px 0;border-bottom:1px solid var(--line)"><div style="display:flex;justify-content:space-between"><a href="https://finviz.com/quote.ashx?t=${x.s}" target="_blank" rel="noopener" style="color:#c5ddff;text-decoration:none;font-weight:700">${x.s}</a><span>$${Number(x.c).toFixed(2)} <b style="color:${x.dp>=0?"var(--green)":"var(--red)"}">${(x.dp>=0?"+":"")+x.dp.toFixed(2)}%</b></span></div>${a?`<div class="dt">${a.dd.toFixed(1)}% desde su ${a.k} ($${a.hi.toFixed(2)})</div>`:""}</div>`};
+ $("heatup").innerHTML=lastMs.slice(0,5).map(li).join("");$("heatdown").innerHTML=lastMs.slice(-5).reverse().map(li).join("")}
+const ETFS=new Set(["VOO","VXUS","SCHD","GLD","SPY","QQQ","DIA","IWM"]);
+function advise(x,q,m){
+ const dp=q.dp,px=q.c,a=athOf(x,px),dd=a?a.dd:null,pe=m&&m.peBasicExclExtraTTM,etf=ETFS.has(x),dn=dp<0,near=dd!==null&&dd>-8,deep=dd!==null&&dd<=-25;
+ let t,L=[];
+ if(etf){t=x==="GLD"?"🪙 Oro: seguro y diversificador":"🧺 Fondo diversificado";
+  L=[["Bogle","Un fondo amplio se compra para mantenerlo décadas: lo que pasó hoy no cambia la tesis. Seguir con aportes periódicos y costos bajos."],["Dalio","Mirar el equilibrio de todo el portafolio: rebalancear si este activo se alejó de su peso objetivo, no por el titular del día."]];
+  if(deep)L.push(["Marks","Está lejos de su máximo: las caídas fuertes son parte del ciclo; tener liquidez y no forzar compras."])}
+ else if(deep&&dn){t="📉 Lejos del máximo y cayendo";L=[["Buffett / Graham","Antes de pensar «está barato», comprobar que el negocio sigue sano y que hay margen de seguridad. Una caída grande no es una oportunidad por sí sola."],["Marks","No intentar atrapar un cuchillo que cae: esperar a que la causa del problema se aclare y limitar el tamaño de la posición."],["Lynch","Revisar ganancias, deuda y por qué baja; si la tesis original se rompió, aceptar la pérdida."]]}
+ else if(deep){t="🔄 Rebote lejos del máximo";L=[["Graham","El mercado es cambiante: un rebote de un día no confirma una recuperación."],["Marks","No apostar fuerte al rebote; esperar resultados que lo respalden."],["Buffett","Si es un buen negocio con tesis intacta, aumentar poco a poco, no de golpe."]]}
+ else if(dn&&near){t="🟡 Retroceso desde cerca del máximo";L=[["Buffett","Si ya la tenías por buenas razones, un susto de un día no cambia nada; no vender por pánico."],["Marks","Cerca de máximos las expectativas ya son altas y cualquier tropiezo se castiga: revisar cuánto riesgo asumes."]]}
+ else if(dn){t="🟠 Corrección moderada";L=[["Bogle / Dalio","Correcciones de 10–20% son normales; mantener el plan y rebalancear si hace falta."],["Lynch","Comprobar si cambió algo en el negocio; si no, es ruido."]]}
+ else if(near){t="🚀 Subiendo cerca del máximo";L=[["Buffett","Precio no es valor: no perseguir lo que ya subió; esperar un precio razonable."],["Marks","Cuando todo sube, el riesgo crece aunque no se note: moderar la exposición."],["Dalio","Si ya pesa demasiado en tu portafolio, rebalancear y asegurar parte de las ganancias."]]}
+ else{t="🟢 Recuperándose";L=[["Bogle","Mantener el plan y los aportes; no cambiar de estrategia por un buen día."],["Lynch","Esperar a que los resultados confirmen la subida."]]}
+ if(!etf)L.push(["Munger","Evitar concentrar demasiado en una sola empresa; entender bien el negocio antes de aumentar."]);
+ if(!etf&&pe>40)L.push(["Graham","Valoración exigente (P/E "+pe.toFixed(0)+"): exige crecimiento muy alto para justificar el precio; ojo al margen de seguridad."]);
+ return {t,L,dd,a,pe}}
+function renderAdvice(){
+ const g=lastMs.slice(0,3).filter(x=>x.dp>0),l=lastMs.slice(-3).filter(x=>x.dp<0).reverse(),seen=new Set(),list=[];
+ [...g,...l].forEach(x=>{seen.add(x.s);list.push({s:x.s,q:{dp:x.dp,c:x.c},tag:x.dp>0?"Mayor subida":"Mayor bajada"})});
+ assets.forEach(a=>{const q=quotes[a.s];if(q&&q.c&&Number.isFinite(q.dp)&&!seen.has(a.s))list.push({s:a.s,q,tag:"Mi portafolio"})});
+ $("heatadvice").innerHTML=list.map(x=>{const r=advise(x.s,x.q,met[x.s]),m=met[x.s]||{};
+  const extra=[r.pe?"P/E "+r.pe.toFixed(1):"",m.beta?"beta "+Number(m.beta).toFixed(2):"",m.dividendYieldIndicatedAnnual?"dividendo "+Number(m.dividendYieldIndicatedAnnual).toFixed(2)+"%":""].filter(Boolean).join(" · ");
+  return `<div class="card" style="padding:14px"><div style="display:flex;justify-content:space-between;align-items:baseline"><div><b>${x.s}</b> <span class="pill">${x.tag}</span></div><span>$${Number(x.q.c).toFixed(2)} <b style="color:${x.q.dp>=0?"var(--green)":"var(--red)"}">${(x.q.dp>=0?"+":"")+x.q.dp.toFixed(2)}%</b></span></div>
+  <div class="dt">${r.a?r.a.dd.toFixed(1)+"% desde su "+r.a.k+" ($"+r.a.hi.toFixed(2)+")":"Máximo no disponible"}${extra?" · "+extra:""}</div>
+  <div style="margin:8px 0 4px;font-weight:700">${r.t}</div>${r.L.map(y=>`<div style="font-size:13px;margin:4px 0"><b style="color:#c5ddff">${y[0]}:</b> ${y[1]}</div>`).join("")}</div>`}).join("")}
+async function fillMovers(){
+ if(fillBusy||!lastMs.length)return;fillBusy=true;
+ try{const top=[...lastMs.slice(0,5),...lastMs.slice(-5)].map(x=>x.s);await getMet([...new Set([...top,...assets.map(a=>a.s)])]);renderMovers();renderPort();renderAdvice()}finally{fillBusy=false}}
+function renderHeat(){
+ const box=$("heatmap"),W=box.clientWidth,H=box.clientHeight;if(!W||!Object.keys(hq).length)return;
+ renderPort();
+ const groups={};HEAT.forEach(h=>{(groups[h.g]=groups[h.g]||{g:h.g,v:0,st:[]}).v+=h.c;groups[h.g].st.push(h)});
+ const secs=squarify(Object.values(groups),0,0,W,H);let html="";
+ secs.forEach(g=>{const hh=g.h>40?15:0;html+=`<div style="position:absolute;left:${g.x.toFixed(1)}px;top:${g.y.toFixed(1)}px;width:${g.w.toFixed(1)}px;height:${g.h.toFixed(1)}px;border:1px solid #0b1727;box-sizing:border-box"><div style="height:${hh}px;font-size:10px;color:#9db0c9;text-transform:uppercase;padding:1px 4px;overflow:hidden;white-space:nowrap">${g.g}</div></div>`;
+  squarify(g.st.map(h=>({...h,v:h.c})),g.x+1,g.y+hh,g.w-2,g.h-hh-1).forEach(t=>{html+=tile(t.x,t.y,t.w,t.h,t.s,hq[t.s],g.g)})});
+ box.innerHTML=html;
+ const ms=HEAT.map(h=>({s:h.s,dp:hq[h.s]&&hq[h.s].dp,c:hq[h.s]&&hq[h.s].c})).filter(x=>Number.isFinite(x.dp)).sort((a,b)=>b.dp-a.dp);
+ lastMs=ms;renderMovers();fillMovers();
+ const sc=SECT.map(x=>({n:x.n,s:x.s,dp:hq[x.s]&&hq[x.s].dp})).filter(x=>Number.isFinite(x.dp)).sort((a,b)=>b.dp-a.dp),mx=Math.max(.5,...sc.map(x=>Math.abs(x.dp)));
+ $("heatsect").innerHTML=sc.map(x=>`<div style="display:flex;align-items:center;gap:8px;margin:4px 0;font-size:13px"><span style="flex:0 0 150px">${x.n} <span class="dt">${x.s}</span></span><div style="flex:1;height:14px;background:#0b1727;border-radius:4px;position:relative"><div style="position:absolute;${x.dp>=0?"left":"right"}:50%;width:${(Math.abs(x.dp)/mx*50).toFixed(1)}%;height:100%;background:${hcol(x.dp*1.5)};border-radius:3px"></div></div><b style="flex:0 0 64px;text-align:right;color:${x.dp>=0?"var(--green)":"var(--red)"}">${(x.dp>=0?"+":"")+x.dp.toFixed(2)}%</b></div>`).join("");
+ $("heatstate").textContent="Actualizado "+new Date().toLocaleTimeString("es-DO",{hour:"2-digit",minute:"2-digit"});
+}
+async function loadHeat(){
+ const t=config().token;if(!t||heatBusy||document.visibilityState!=="visible")return;heatBusy=true;
+ try{const syms=[...HEAT.map(h=>h.s),...SECT.map(x=>x.s)];
+  for(let i=0;i<syms.length;i+=6){await Promise.all(syms.slice(i,i+6).map(async s=>{try{const r=await fetch(`https://finnhub.io/api/v1/quote?symbol=${encodeURIComponent(s)}&token=${encodeURIComponent(t)}`);if(r.ok){const q=await r.json();if(q&&q.c)hq[s]=q}}catch(e){}}))}
+  renderHeat()}finally{heatBusy=false}}
+let heatT;addEventListener("resize",()=>{clearTimeout(heatT);heatT=setTimeout(renderHeat,200)});
+setTimeout(loadHeat,2500);setInterval(loadHeat,5*60000);
+setTimeout(loadInfo,600);setInterval(loadInfo,10*60000);
+setTimeout(loadBcrd,700);setInterval(loadBcrd,30*60000);
+setTimeout(loadFx,500);setInterval(loadFx,30*60000);
+let lastAll=[];
+const VM={elerianm:/bloomberg/i,TheStalwart:/bloomberg/i,carlquintanilla:/cnbc/i,jimcramer:/cnbc/i,NickTimiraos:/wall street journal|wsj|dow jones/i,RayDalio:null,LizAnnSonders:null,BillAckman:null};
+function ago(t){const m=Math.max(0,Math.round((Date.now()/1000-t)/60));return m<60?`hace ${m} min`:m<1440?`hace ${Math.round(m/60)} h`:`hace ${Math.round(m/1440)} d`}
+function updateVoices(){
+ TL.forEach(a=>{const el=$("vs-"+a[0]);if(!el)return;const re=VM[a[0]];
+  const list=lastAll.filter(n=>n.datetime&&isTrusted(n)&&(!re||re.test((n.source||"")+" "+(n.url||"")))).sort((x,y)=>y.datetime-x.datetime);
+  const who=re?"su medio":"medios de referencia";
+  if(!list.length){el.innerHTML=`⚪ Sin noticias de mercado recientes de ${who}`;return}
+  const n=list[0],fresh=Date.now()/1000-n.datetime<3*3600,url=/^https?:\/\//.test(n.url||"")?escapeHtml(n.url):"#";
+  el.innerHTML=`${fresh?"🔴 <b>Nuevo</b>":"🟢 Última"} · ${escapeHtml(n.source||"")} ${ago(n.datetime)}: <a href="${url}" target="_blank" rel="noopener" style="color:#c5ddff">${escapeHtml((n.hes||n.headline||"").slice(0,120))}</a>`;
+  if(fresh)alertUser(`Nueva noticia de mercado · ${n.source||""}`,n.hes||n.headline||"",`vs-${n.source}-${n.id||n.url}`)});
+}
+function xFallback(el,h){if(el.querySelector("iframe"))return;el.innerHTML=`<div class="empty">X no permitió mostrar las publicaciones de @${h} aquí (suele exigir sesión iniciada). <a href="https://x.com/${h}" target="_blank" rel="noopener" style="color:#c5ddff">Abrir @${h} en X →</a></div>`}
+function loadX(){
+ $("tls").innerHTML=TL.map(a=>`<div class="card" style="padding:12px"><div style="font-weight:700;margin-bottom:8px">${a[1]} <a href="https://x.com/${a[0]}" target="_blank" rel="noopener" style="font-weight:400;font-size:12px;color:#c5ddff">@${a[0]}</a></div><div class="dt" id="vs-${a[0]}" style="margin:-2px 0 10px">⏳ Esperando noticias…</div><div id="tl-${a[0]}"><div class="empty">Cargando publicaciones…</div></div></div>`).join("");
+ updateVoices();
+ const go=()=>TL.forEach(a=>{const el=$("tl-"+a[0]);el.innerHTML="";
+  try{twttr.widgets.createTimeline({sourceType:"profile",screenName:a[0]},el,{theme:"dark",height:420,chrome:"noheader nofooter noborders transparent",dnt:true}).then(e=>{if(!e)xFallback(el,a[0])}).catch(()=>xFallback(el,a[0]))}catch(e){xFallback(el,a[0])}
+  setTimeout(()=>xFallback(el,a[0]),12000)});
+ if(window.twttr&&twttr.widgets){go();return}
+ const sc=document.createElement("script");sc.src="https://platform.twitter.com/widgets.js";sc.async=true;sc.onload=go;
+ sc.onerror=()=>TL.forEach(a=>xFallback($("tl-"+a[0]),a[0]));document.body.appendChild(sc);
+}
+$("loadx").addEventListener("click",loadX);
+setTimeout(loadX,600);setTimeout(renderFomc,100);
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+$("refresh").addEventListener("click",refresh);
+$("wipe").addEventListener("click",()=>{if(confirm("¿Borrar la clave API y todos los datos guardados en este navegador?")){localStorage.clear();location.reload()}});
+function auto(){liveMarket();loadHeat();if(config().token&&!$("refresh").disabled)refresh()}
+setInterval(auto,2*60*1000);setInterval(liveMarket,20000);
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")auto()});
+window.addEventListener("online",auto);
+$("token").addEventListener("change",()=>{save();auto()});
+if(localStorage.getItem("radar_token"))setTimeout(auto,300);
+if("Notification"in window&&Notification.permission==="default"&&localStorage.getItem("radar_token"))document.addEventListener("click",()=>Notification.requestPermission(),{once:true});
+</script>
+</body>
+</html>
